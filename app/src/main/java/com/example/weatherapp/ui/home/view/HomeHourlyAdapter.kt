@@ -57,8 +57,8 @@ class HomeHourlyAdapter(val context: Context): ListAdapter<HourlyWeather, HomeHo
     private fun getIcon(icon: String): Int {
         val iconValue: Int
         when (icon) {
-            "01d" -> iconValue = R.drawable.clear_sky
-            "01n" -> iconValue = R.drawable.clear_sky
+            "01d" -> iconValue = R.drawable.clear
+            "01n" -> iconValue = R.drawable.clear
             "02d" -> iconValue = R.drawable.cloudy
             "02n" -> iconValue = R.drawable.cloudy
             "03n" -> iconValue = R.drawable.cloudy

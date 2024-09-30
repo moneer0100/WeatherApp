@@ -237,7 +237,7 @@ class HomeFragment : Fragment() {
         binding.temperatureId.text = weatherResponse.main.temp.toString()
         binding.statuId.text = weatherResponse.weather.get(0).description
         val weatherIcon = weatherResponse.weather.get(0).icon
-        binding.imageView.setImageResource(getWeatherIcon(weatherIcon))
+        binding.imageView.setImageResource(getIcon(weatherIcon))
     }
 
     private fun displayWeatherDataforcast(weatherResponseforcast: Forecast) {
@@ -292,11 +292,11 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 
-    private fun getWeatherIcon(icon: String): Int {
+    private fun getIcon(icon: String): Int {
         val iconValue: Int
         when (icon) {
-            "01d" -> iconValue = R.drawable.clear_sky
-            "01n" -> iconValue = R.drawable.clear_sky
+            "01d" -> iconValue = R.drawable.clear
+            "01n" -> iconValue = R.drawable.clear
             "02d" -> iconValue = R.drawable.cloudy
             "02n" -> iconValue = R.drawable.cloudy
             "03n" -> iconValue = R.drawable.cloudy
@@ -317,7 +317,6 @@ class HomeFragment : Fragment() {
         }
         return iconValue
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

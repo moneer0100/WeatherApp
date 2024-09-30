@@ -15,7 +15,6 @@ data class DailyWeather(
 fun convertToDailyWeather(dailyItems: List<ListElement>): List<DailyWeather> {
     val dailyWeatherMap = mutableMapOf<String, MutableList<ListElement>>()
 
-    // Group forecast data by day
     for (dailyItem in dailyItems) {
         val date = getDate(dailyItem.dt) // Group by date (yyyy-MM-dd)
         if (dailyWeatherMap.containsKey(date)) {
@@ -25,21 +24,16 @@ fun convertToDailyWeather(dailyItems: List<ListElement>): List<DailyWeather> {
         }
     }
 
-    // Create daily weather summaries
     val dailyWeatherList = dailyWeatherMap.map { (date, dailyItems) ->
-        // Calculate max and min temperatures for the day
-        val maxTemperature = dailyItems.maxOf { it.main.temp }
-        val minTemperature = dailyItems.minOf { it.main.tempMin }
 
-        // Get weather description and icon (e.g., from the first entry or at noon)
+        val maxTemperature = dailyItems.maxOf { it.main.temp }
+        val minTemperature = dailyItems.minOf { it.main.tempMin}
+
         val weatherDescription = dailyItems.firstOrNull()?.weather?.firstOrNull()?.description ?: ""
         val icon = dailyItems.firstOrNull()?.weather?.firstOrNull()?.icon ?: ""
 
-        // Get day of the week
         val dayOfWeek = getDayOfWeek(dailyItems.firstOrNull()?.dt ?: 0L)
-
-        // Create the DailyWeather object
-        DailyWeather(
+   DailyWeather(
             dayOfWeek = dayOfWeek,
             date = date,
             maxTemperature = maxTemperature,

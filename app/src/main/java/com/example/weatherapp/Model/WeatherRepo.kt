@@ -15,4 +15,8 @@ interface WeatherRepo
         long: Double?,
         apki:String
     ):Flow<Forecast>
+
+    fun getAllWeatherFavoirit():Flow<List<FaviouritWeather>>
+suspend fun insertDataFaviourit(fav:FaviouritWeather)
+suspend fun deletWeatherFav(fav: FaviouritWeather)
 }

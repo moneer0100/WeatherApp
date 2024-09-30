@@ -1,11 +1,16 @@
 package com.example.weatherapp.Model
 
 import Welcome
+import com.example.weatherapp.DataBase.WeatherLocaSource
+import com.example.weatherapp.DataBase.WeatherLocalImp
 import com.example.weatherapp.network.WeatherRemoteData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class WeatherRepoImp(private val weatherRemoteData: WeatherRemoteData):WeatherRepo {
+class WeatherRepoImp(
+    private val weatherRemoteData: WeatherRemoteData
+    ,private val weatherLocalData:WeatherLocaSource
+):WeatherRepo {
     override suspend fun getCurrentWeather(
         lat: Double?,
         long: Double?,
@@ -23,11 +28,28 @@ class WeatherRepoImp(private val weatherRemoteData: WeatherRemoteData):WeatherRe
     }
     companion object {
         private var instance: WeatherRepoImp? = null
-        fun getInstance(remoteSource: WeatherRemoteData): WeatherRepoImp {
+        fun getInstance(remoteSource: WeatherRemoteData,localSource: WeatherLocaSource): WeatherRepoImp {
             return instance ?: synchronized(this) {
-                instance?: WeatherRepoImp(remoteSource)
+                instance?: WeatherRepoImp(remoteSource,localSource)
                     .also { instance = it }
             }
         }
+
+
     }
+
+    override fun getAllWeatherFavoirit(): Flow<List<FaviouritWeather>> {
+        return weatherLocalData.getAllWeather()
+    }
+
+
+    override suspend fun insertDataFaviourit(fav: FaviouritWeather) {
+       return weatherLocalData.insertWeather(fav)
+    }
+
+    override suspend fun deletWeatherFav(fav: FaviouritWeather) {
+      return weatherLocalData.deleteWeather(fav)
+    }
+
+
 }
