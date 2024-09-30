@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.home
+package com.example.weatherapp.ui.home.view
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapp.Model.HourlyWeather
 
 import com.example.weatherapp.Model.ListElement
 import com.example.weatherapp.R
@@ -13,15 +14,17 @@ import com.example.weatherapp.R
 
 import com.example.weatherapp.databinding.HomeForcastHourlyBinding
 
-class HomeHourlyAdapter(val context: Context): ListAdapter<ListElement, HomeHourlyAdapter.ViewHolder>(MyDiffutil()) {
+class HomeHourlyAdapter(val context: Context): ListAdapter<HourlyWeather, HomeHourlyAdapter.ViewHolder>(
+    MyDiffutil()
+) {
     lateinit var binding: HomeForcastHourlyBinding
 
-    class MyDiffutil: DiffUtil.ItemCallback<ListElement>() {
-        override fun areItemsTheSame(oldItem: ListElement, newItem: ListElement): Boolean {
-            return oldItem.dt == newItem.dt// Assuming ListElement has an 'id' field
+    class MyDiffutil: DiffUtil.ItemCallback<HourlyWeather>() {
+        override fun areItemsTheSame(oldItem: HourlyWeather, newItem: HourlyWeather): Boolean {
+            return oldItem.hour == newItem.hour// Assuming ListElement has an 'id' field
         }
 
-        override fun areContentsTheSame(oldItem: ListElement, newItem: ListElement): Boolean {
+        override fun areContentsTheSame(oldItem: HourlyWeather, newItem: HourlyWeather): Boolean {
             return oldItem == newItem
         }
     }
@@ -35,18 +38,19 @@ class HomeHourlyAdapter(val context: Context): ListAdapter<ListElement, HomeHour
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-      holder.bindData(getItem(position))
+        holder.bindData(getItem(position))
     }
 
 
 
 
     inner class ViewHolder(var binding: HomeForcastHourlyBinding): RecyclerView.ViewHolder(binding.root){
-        fun bindData(hourlyWeather: ListElement) {
+        fun bindData(hourlyWeather: HourlyWeather) {
             binding.apply {
-                timeid.text =hourlyWeather.dtTxt
-                tempH.text =hourlyWeather.main.temp.toString()
-                iconH.setImageResource(getIcon(hourlyWeather.weather.get(0).icon))
+                timeid.text =hourlyWeather.hour.toString()
+                textAm.text =hourlyWeather.amPm.toString()
+                tempH.text =hourlyWeather.temperature.toString()
+                iconH.setImageResource(getIcon(hourlyWeather.icon))
 
             }}
     }
