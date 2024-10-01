@@ -13,12 +13,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.Language
 
 class HomeViewModel(private val repo: WeatherRepo) : ViewModel() {
     //StateFlow is a state holder that is hot (always active)
     // and emits the latest value to any collector
     // (similar to RxJava's BehaviorSubject).
-
+lateinit var welcom:Welcome
     // خنا بنستخدم seald class عشان نعرف حاله الاتصال
     // indicating that when the flow is first created, it's in a loading state
     // (commonly used for network operations).
@@ -27,28 +28,31 @@ class HomeViewModel(private val repo: WeatherRepo) : ViewModel() {
 
     private val currentWeatherLive = MutableLiveData<Welcome>()
 
-    private val weatherForcastLoad = MutableStateFlow<ResponseState<Forecast>>(ResponseState.Loading)
-    val weatherforcast = weatherForcastLoad.asStateFlow()
-
-    private val forcasttWeatherLive = MutableLiveData<Forecast>()
 
 
-    fun getCurrentWeatherResponse(lat:Double,long: Double,apki:String){
+
+
+    fun getCurrentWeatherResponse(lat:Double,lon: Double,language: String,units:String){
         viewModelScope.launch (Dispatchers.IO){
-            repo.getCurrentWeather(lat,long,apki)
+            repo.getCurrentWeather(lat,lon,language,units)
                 ?.catch { error-> weatherCurrentLoad.value=ResponseState.Error(error)}
                 ?.collect{data->weatherCurrentLoad.value=ResponseState.Success(data)
                     Log.d("moneer", "DataCurrentRecived: $data")}
         }
     }
-    fun getForcastWeatherRespons(lat:Double,long: Double,apki:String){
+    private val weatherForcastLoad = MutableStateFlow<ResponseState<Forecast>>(ResponseState.Loading)
+    val weatherforcast = weatherForcastLoad.asStateFlow()
+
+    private val forcasttWeatherLive = MutableLiveData<Forecast>()
+    fun getForcastWeatherRespons(lat:Double,lon: Double,language: String,units:String){
 
         viewModelScope.launch(Dispatchers.IO){
-            repo.getForcastWeather(lat,long,apki)
+            repo.getForcastWeather(lat,lon,language,language)
                 ?.catch { error->weatherForcastLoad.value=ResponseState.Error(error)  }
                 ?.collect{data->weatherForcastLoad.value=ResponseState.Success(data)
                     Log.d("moneer", "getForcastWeatherRespons:$data ")
                 }
+
         }
     }
 

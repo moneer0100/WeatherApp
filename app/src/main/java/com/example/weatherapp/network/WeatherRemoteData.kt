@@ -8,13 +8,15 @@ interface WeatherRemoteData {
 
         lat:Double?,
         long: Double?,
-        apikey:String?
+        language: String?,
+        units: String?
 
     ):Welcome
     suspend fun getForcastResponse(
 
         lat:Double?,
         long: Double?,
-        apikey:String?
+        language: String?,
+        units: String?
     ): Forecast
 }

@@ -2,7 +2,6 @@ package com.example.weatherapp.Model
 
 import Welcome
 import com.example.weatherapp.DataBase.WeatherLocaSource
-import com.example.weatherapp.DataBase.WeatherLocalImp
 import com.example.weatherapp.network.WeatherRemoteData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -14,17 +13,19 @@ class WeatherRepoImp(
     override suspend fun getCurrentWeather(
         lat: Double?,
         long: Double?,
-        apki: String
+        language: String,
+        units: String?
     ): Flow<Welcome> {
-        return flowOf(weatherRemoteData.getCurrentDataResponse(lat,long,apki))
+        return flowOf(weatherRemoteData.getCurrentDataResponse(lat,long,language,units))
     }
 
     override suspend fun getForcastWeather(
         lat: Double?,
         long: Double?,
-        apki: String
+        language: String,
+        units: String?
     ): Flow<Forecast> {
-        return flowOf(weatherRemoteData.getForcastResponse(lat,long,apki))
+        return flowOf(weatherRemoteData.getForcastResponse(lat,long,language,units))
     }
     companion object {
         private var instance: WeatherRepoImp? = null

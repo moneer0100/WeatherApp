@@ -1,20 +1,25 @@
 package com.example.weatherapp.DataBase
 
+import Welcome
 import com.example.weatherapp.Model.FaviouritWeather
 import kotlinx.coroutines.flow.Flow
 
-class WeatherLocalImp(private val dao: Dao):WeatherLocaSource {
+class WeatherLocalDataImp(private val dao: Dao):WeatherLocaSource {
 
     companion object {
         @Volatile
-        var instance: WeatherLocalImp? = null
-        fun getInstance(weatherDao: Dao): WeatherLocalImp {
+        var instance: WeatherLocalDataImp? = null
+        fun getInstance(dao: Dao): WeatherLocalDataImp {
             return instance?: synchronized(this){
-                instance?: WeatherLocalImp(weatherDao)
+                instance?: WeatherLocalDataImp(dao)
                     .also { instance = it }
             }
         }
     }
+
+
+
+///////////fav
     override fun getAllWeather(): Flow<List<FaviouritWeather>> {
      return dao.getFavoriteWeather()
     }

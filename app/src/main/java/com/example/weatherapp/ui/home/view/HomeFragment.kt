@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.LocationManager
@@ -21,6 +22,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapp.Constant
+import com.example.weatherapp.DataBase.DatabaseClient
+import com.example.weatherapp.DataBase.WeatherLocalDataImp
 import com.example.weatherapp.Model.*
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeBinding
@@ -31,8 +35,12 @@ import com.example.weatherapp.ui.home.viewModel.HomeViewFactory
 import com.example.weatherapp.ui.home.viewModel.HomeViewModel
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.Language
+import java.io.File
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,13 +52,18 @@ class HomeFragment : Fragment() {
     private val MY_LOCATION_PERMISSION_ID = 5005
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
+    lateinit var langauages:String
+    lateinit var unitss:String
+    private lateinit var sharedPreferencesSettings: SharedPreferences
+    lateinit var sharedPreferences:SharedPreferences
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
     private val viewModel: HomeViewModel by viewModels {
         HomeViewFactory(
-            WeatherRepoImp.getInstance(weatherRemotImp.getInstance(RetrofitHelper.service))
+            WeatherRepoImp.getInstance(weatherRemotImp.getInstance(RetrofitHelper.service),
+       WeatherLocalDataImp.getInstance(DatabaseClient.getInstance(requireContext()).WeatherDataBase()))
         )
     }
 
@@ -68,8 +81,22 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
         initializeLocationClient()
         checkLocationSettings()
-    }
+        sharedPreferences = requireContext().getSharedPreferences("LocationUsedMethod", Context.MODE_PRIVATE)
+        langauages = sharedPreferences.getString(
+            Constant.LANGUAGE_KEY,
+            Constant.Enum_lANGUAGE.en.toString()
+        ).toString()
 
+        unitss = sharedPreferences.getString(
+            Constant.UNITS_KEY,
+            Constant.ENUM_UNITS.metric.toString()
+        ).toString()
+
+    }
+  fun langaageAndUnits(){
+
+
+  }
     private fun setupRecyclerView() {
         hourlyAdapter = HomeHourlyAdapter(requireContext())
         binding.recyclerViewhourly.apply {
@@ -151,12 +178,10 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
     @SuppressLint("MissingPermission")
     private fun getFreshLocation() {
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000) // 10 seconds
             .build()
-
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest,
             object : LocationCallback() {
@@ -164,26 +189,91 @@ class HomeFragment : Fragment() {
                     locationResult.lastLocation?.let { location ->
                         latitude = location.latitude
                         longitude = location.longitude
-                        fetchWeathercurrentData(LatLng(latitude, longitude))
-                        fetchWeatherforcastData(LatLng(latitude,longitude))
-                        getCityAndAddress(latitude, longitude)
+
+                        // Check if fragment is added before fetching weather data
+                        if (isAdded) {
+                            fetchWeathercurrentData(LatLng(latitude, longitude), langauages, unitss)
+                            fetchWeatherforcastData(LatLng(latitude, longitude), langauages, unitss)
+                            getCityAndAddress(latitude, longitude)
+                        }
                     } ?: Log.e("HomeFragment", "Location is null")
                 }
             },
             Looper.getMainLooper()
         )
     }
-    private fun fetchWeatherforcastData(latLng: LatLng) {
+    private fun fetchWeatherforcastData(latLng: LatLng,language: String,units:String) {
         if (isConnected(requireContext())) {
-            val apiKey = "d14e1678acbd48238d39b72b88398c61" // Replace with your actual API key
-            viewModel.getForcastWeatherRespons(latLng.latitude, latLng.longitude, apiKey)
-            viewModel.getCurrentWeatherResponse(latLng.latitude, latLng.longitude, apiKey)
+
+            viewModel.getForcastWeatherRespons(latLng.latitude, latLng.longitude, langauages,unitss)
+            viewModel.getCurrentWeatherResponse(latLng.latitude, latLng.longitude, langauages,unitss)
 
             lifecycleScope.launch {
                 viewModel.weatherforcast.collectLatest { viewStateResult ->
                     when (viewStateResult) {
                         is ResponseState.Success -> {
-                            displayWeatherDataforcast(viewStateResult.data)
+                            displayWeatherDataforcast(viewStateResult.data,langauages,unitss)
+
+                        }
+                        is ResponseState.Loading -> {
+                            // Optionally show loading UI
+                        }
+                        is ResponseState.Error -> {
+                            displayError(viewStateResult.message.toString())
+                            loadWeatherDataFromFileforcast()
+                        }
+                    }
+                }
+            }
+        } else {
+            loadWeatherDataFromFileforcast()
+        }
+    }
+
+    private fun loadWeatherDataFromFileforcast() {
+        val weatherData = readWeatherDataFromFileforcast()
+        weatherData?.let {
+            displayWeatherDataforcast(it, "", "")
+        }
+    }
+
+    private fun readWeatherDataFromFileforcast(): Forecast?{
+        val fileName = "weather_data_forcast.txt"
+        val file = File(requireContext().filesDir, fileName)
+
+        return try {
+            if (file.exists()) {
+                val jsonString = file.readText()
+                val gson = Gson()
+                gson.fromJson(jsonString, Forecast::class.java)
+            } else {
+                Log.e("HomeFragment", "Error: File does not exist")
+                null
+            }
+        } catch (e: IOException) {
+            Log.e("HomeFragment", "Error reading weather data from file: IOException", e)
+            null
+        }
+    }
+
+    private fun fetchWeathercurrentData(latLng: LatLng, language: String, units: String) {
+        if (isConnected(requireContext())) {
+            viewModel.getForcastWeatherRespons(latLng.latitude, latLng.longitude, language, units)
+            viewModel.getCurrentWeatherResponse(latLng.latitude, latLng.longitude, language, units)
+
+            // Check binding is initialized and fragment is added before accessing UI
+            if (isAdded) {
+                binding.dateId.text = formatDate(date.format(Date()))
+            }
+
+            lifecycleScope.launch {
+                viewModel.weathercurrent.collectLatest { viewStateResult ->
+                    when (viewStateResult) {
+                        is ResponseState.Success -> {
+                            // Check if binding is initialized
+                            if (isAdded) {
+                                displayWeatherDatacurrent(viewStateResult.data, language, units)
+                            }
                         }
                         is ResponseState.Loading -> {
                             // Optionally show loading UI
@@ -200,54 +290,63 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun fetchWeathercurrentData(latLng: LatLng) {
-        if (isConnected(requireContext())) {
-            val apiKey = "d14e1678acbd48238d39b72b88398c61" // Replace with your actual API key
-            viewModel.getForcastWeatherRespons(latLng.latitude, latLng.longitude, apiKey)
-            viewModel.getCurrentWeatherResponse(latLng.latitude, latLng.longitude, apiKey)
-            binding.dateId.text = formatDate(date.format(Date()))
+    private fun displayWeatherDatacurrent(weatherResponse: Welcome, language: String, units: String) {
+        val currentWeather = weatherResponse.main
+        val temperatureUnit = getTemperatureUnit(units, language)
 
-            lifecycleScope.launch {
-                // Collect current weather data
-                viewModel.weathercurrent.collectLatest { viewStateResult ->
-                    when (viewStateResult) {
-                        is ResponseState.Success -> {
-                            displayWeatherDatacurrent(viewStateResult.data)
-                        }
-
-                        is ResponseState.Loading -> {
-                            // Optionally show loading UI
-                        }
-
-                        is ResponseState.Error -> {
-                            displayError(viewStateResult.message.toString())
-                            loadWeatherDataFromFile()
-                        }
-                    }
-                }}
-
+        // If units is metric, the temperature is already in Celsius
+        val temperatureValue = if (units == Constant.ENUM_UNITS.metric.toString()) {
+            currentWeather.temp.toString()  // Assuming temp is already in Celsius
+        } else if (language == Constant.Enum_lANGUAGE.ar.toString()) {
+            currentWeather.temp.toString().toArabicNumerals()
         } else {
-            loadWeatherDataFromFile()
+            currentWeather.temp.toString()
         }
-    }
 
-    private fun displayWeatherDatacurrent(weatherResponse: Welcome) {
+        binding.temperatureId.text = "$temperatureValue $temperatureUnit"
+        binding.statuId.text = "${currentWeather.pressure}"
 
-
-        binding.temperatureId.text = weatherResponse.main.temp.toString()
-        binding.statuId.text = weatherResponse.weather.get(0).description
-        val weatherIcon = weatherResponse.weather.get(0).icon
+        // Set the weather icon
+        val weatherIcon = weatherResponse.weather.firstOrNull()?.icon ?: "01d" // Default icon if not found
         binding.imageView.setImageResource(getIcon(weatherIcon))
     }
 
-    private fun displayWeatherDataforcast(weatherResponseforcast: Forecast) {
-        val currentWeather = weatherResponseforcast.list
-        val convertDaulyWeather= convertToDailyWeather(currentWeather)
-        val convertHourlyWeather = convertToHourlyWeather(currentWeather)
-        Log.d("moneer", "displayWeatherDataforcast: ${convertHourlyWeather[0].temperature}")
+    private fun displayWeatherDataforcast(weatherResponseForecast: Forecast, language: String, units: String) {
+        val forecastList = weatherResponseForecast.list
+        val temperatureUnit = getTemperatureUnit(units, language)
+
+        // Convert daily and hourly weather data
+        val convertDailyWeather = convertToDailyWeather(forecastList)
+        val convertHourlyWeather = convertToHourlyWeather(forecastList)
+
+        // Submit the data to the adapters
         hourlyAdapter.submitList(convertHourlyWeather)
-        dayilyAdapter.submitList(convertDaulyWeather)
+        dayilyAdapter.submitList(convertDailyWeather)
     }
+
+    private fun getTemperatureUnit(units: String, language: String): String {
+        return when (language) {
+            Constant.Enum_lANGUAGE.ar.toString() -> {
+                when (units) {
+                    Constant.ENUM_UNITS.metric.toString() -> "°س"
+                    Constant.ENUM_UNITS.imperial.toString() -> "°ف"
+                    Constant.ENUM_UNITS.standard.toString() -> "ك"
+                    else -> "°س"
+                }
+            }
+            else -> {
+                when (units) {
+                    Constant.ENUM_UNITS.metric.toString() -> "°C"
+                    Constant.ENUM_UNITS.imperial.toString() -> "°F"
+                    Constant.ENUM_UNITS.standard.toString() -> "K"
+                    else -> "°C"
+                }
+            }
+        }
+    }
+
+
+
 
     private fun displayError(message: String) {
         Log.e("HomeFragment", "Error: $message")
@@ -259,9 +358,32 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadWeatherDataFromFile() {
-        // Handle loading from file when network is unavailable
-        Log.i("HomeFragment", "Loading weather data from file")
+        val weatherData = readWeatherDataFromFile()
+        weatherData?.let {
+            displayWeatherDatacurrent(it, "", "")
+        }
+
     }
+
+    private fun readWeatherDataFromFile(): Welcome? {
+        val fileName = "weather_data_current.txt"
+        val file = File(requireContext().filesDir, fileName)
+
+        return try {
+            if (file.exists()) {
+                val jsonString = file.readText()
+                val gson = Gson()
+                gson.fromJson(jsonString, Welcome::class.java)
+            } else {
+                Log.e("HomeFragment", "Error: File does not exist")
+                null
+            }
+        } catch (e: IOException) {
+            Log.e("HomeFragment", "Error reading weather data from file: IOException", e)
+            null
+        }
+    }
+
 
     private fun enableLocationService() {
         val intent = Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)

@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id ("kotlin-kapt")
+    id ("androidx.navigation.safeargs")
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -64,6 +66,32 @@ dependencies {
 
     //glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
 //location
     implementation("com.google.android.gms:play-services-location:21.1.0")
+    // Room
+    implementation ("androidx.room:room-ktx:2.6.1")
+    implementation ("androidx.room:room-runtime:2.6.1")
+    kapt ("androidx.room:room-compiler:2.6.1")
+///courouton
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+
+    // Google Play Services
+    implementation ("com.google.android.gms:play-services-location:17.1.0")
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+    implementation ("androidx.work:work-runtime-ktx:2.7.1")
+
+    // Picasso
+    implementation ("com.squareup.picasso:picasso:2.8")
+
+    // ViewModel & LiveData
+    implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
+    // Navigation Component
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
+
 }

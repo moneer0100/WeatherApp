@@ -19,17 +19,19 @@ class weatherRemotImp private constructor(weatherApiService: ApiService):Weather
     override suspend fun getCurrentDataResponse(
         lat: Double?,
         long: Double?,
-        apikey: String?
+        language: String?,
+        units: String?
     ): Welcome {
-        return apiService.getWeatherCurrent(lat,long, apikey.toString())
+        return apiService.getWeatherCurrent(lat,long, language,units)
     }
 
     override suspend fun getForcastResponse(
         lat: Double?,
         long: Double?,
-        apikey: String?
+        language: String?,
+        units: String?
     ): Forecast {
-        return apiService.getweatherForcast(lat,long, apikey.toString())
+        return apiService.getweatherForcast(lat,long, language,units)
     }
 
 

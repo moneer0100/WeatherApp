@@ -8,15 +8,20 @@ interface WeatherRepo
     suspend fun getCurrentWeather(
         lat:Double?,
         long: Double?,
-        apki:String
+        language: String,
+        units: String?
     ):Flow<Welcome>
     suspend fun getForcastWeather(
         lat:Double?,
         long: Double?,
-        apki:String
+        language: String,
+        units: String?
     ):Flow<Forecast>
 
-    fun getAllWeatherFavoirit():Flow<List<FaviouritWeather>>
+
+
+    //fav
+fun getAllWeatherFavoirit():Flow<List<FaviouritWeather>>
 suspend fun insertDataFaviourit(fav:FaviouritWeather)
 suspend fun deletWeatherFav(fav: FaviouritWeather)
 }

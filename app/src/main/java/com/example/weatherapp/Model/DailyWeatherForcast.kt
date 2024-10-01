@@ -26,7 +26,7 @@ fun convertToDailyWeather(dailyItems: List<ListElement>): List<DailyWeather> {
 
     val dailyWeatherList = dailyWeatherMap.map { (date, dailyItems) ->
 
-        val maxTemperature = dailyItems.maxOf { it.main.temp }
+        val maxTemperature = dailyItems.maxOf { it.main.tempMax }
         val minTemperature = dailyItems.minOf { it.main.tempMin}
 
         val weatherDescription = dailyItems.firstOrNull()?.weather?.firstOrNull()?.description ?: ""

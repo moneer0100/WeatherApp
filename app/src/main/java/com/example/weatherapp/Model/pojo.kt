@@ -1,4 +1,12 @@
+
+import androidx.room.Entity
+
+import androidx.room.PrimaryKey
+
+
 data class Welcome (
+
+    val id: Long,
     val coord: Coord,
     val weather: List<Weather>,
     val base: String,
@@ -9,7 +17,7 @@ data class Welcome (
     val dt: Long,
     val sys: Sys,
     val timezone: Long,
-    val id: Long,
+
     val name: String,
     val cod: Long
 )
@@ -58,6 +66,7 @@ data class Sys (
 
 
 data class Weather (
+
     val id: Long,
     val main: String,
     val description: String,
