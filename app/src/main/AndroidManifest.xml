@@ -30,12 +30,10 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY" />
+            android:value="AIzaSyDQnKc0_n5I7NMwzRe-u55bIBjt_WrTgFk" />
 
-        <service
-            android:name=".ui.home.MyService"
-            android:enabled="true"
-            android:exported="true" />
+
+
 
         <activity
             android:name=".MainActivity"
@@ -47,7 +45,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+        <activity
+            android:name=".map.view.MapsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

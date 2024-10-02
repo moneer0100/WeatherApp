@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id ("kotlin-kapt")
     id ("androidx.navigation.safeargs")
+
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
@@ -53,11 +54,14 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.preference)
     implementation(libs.play.services.maps)
+    implementation(libs.androidx.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.room:room-runtime:2.6.1")
+
+
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
@@ -69,6 +73,7 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
 //location
     implementation("com.google.android.gms:play-services-location:21.1.0")
+    implementation ("com.google.android.gms:play-services-maps:19.0.0")
     // Room
     implementation ("androidx.room:room-ktx:2.6.1")
     implementation ("androidx.room:room-runtime:2.6.1")
@@ -79,8 +84,9 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
 
     // Google Play Services
-    implementation ("com.google.android.gms:play-services-location:17.1.0")
-    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+
+
+
     implementation ("androidx.work:work-runtime-ktx:2.7.1")
 
     // Picasso

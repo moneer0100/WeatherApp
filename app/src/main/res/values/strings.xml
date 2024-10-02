@@ -35,4 +35,6 @@
     <string name="Time">time</string>
     <string name="temp" />
     <string name="temperatur">temperature\n</string>
+    <string name="title_activity_mapss">MapssActivity</string>
+    <string name="title_activity_maps2">MapsActivity2</string>
 </resources>

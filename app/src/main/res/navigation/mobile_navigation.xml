@@ -39,27 +39,46 @@
         android:id="@+id/nav_alert"
         android:name="com.example.weatherapp.ui.alert.AlertFragment"
         android:label="@string/Alert"
-        tools:layout="@layout/fragment_alert" />
+        tools:layout="@layout/fragment_alert" >
+        <action
+            android:id="@+id/action_nav_alert_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+        <argument
+            android:name="latlon"
+            app:argType="com.example.weatherapp.Model.LocationLatLngPojo"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
     <fragment
         android:id="@+id/nav_setting"
         android:name="com.example.weatherapp.ui.setting.Setting"
         android:label="setting"
-        tools:layout="@layout/setting" />
+        tools:layout="@layout/setting" >
+        <action
+            android:id="@+id/action_nav_setting_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mapsFragment"
-        android:name="com.example.weatherapp.MapsFragment"
-        android:label="fragment_maps"
-        tools:layout="@layout/fragment_maps" >
+        android:name="com.example.weatherapp.map.view.MapsFragment"
+        android:label="Maps"
+        tools:layout="@layout/fragment_maps">
         <argument
             android:name="type"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <argument
             android:name="favourite"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_mapsFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_mapsFragment_to_nav_alert"
+            app:destination="@id/nav_alert" />
     </fragment>
 
 

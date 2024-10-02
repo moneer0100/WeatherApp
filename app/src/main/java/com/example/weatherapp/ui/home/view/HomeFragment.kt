@@ -93,10 +93,7 @@ class HomeFragment : Fragment() {
         ).toString()
 
     }
-  fun langaageAndUnits(){
 
-
-  }
     private fun setupRecyclerView() {
         hourlyAdapter = HomeHourlyAdapter(requireContext())
         binding.recyclerViewhourly.apply {

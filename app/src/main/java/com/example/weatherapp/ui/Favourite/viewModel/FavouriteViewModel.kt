@@ -19,7 +19,8 @@ private val _favList=MutableStateFlow<FavState<FaviouritWeather>>(FavState.Loadi
 
     fun getFavWeather(){
         viewModelScope.launch(Dispatchers.IO) {
-        repo.getAllWeatherFavoirit().catch {
+        repo.getAllWeatherFavoirit()
+            .catch {
         error->_favList.value=FavState.Error(error)
             Log.d("moneer", "getFavWeatherError$error: ")
         }
