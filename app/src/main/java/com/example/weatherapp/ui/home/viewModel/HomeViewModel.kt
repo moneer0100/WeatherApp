@@ -19,14 +19,14 @@ class HomeViewModel(private val repo: WeatherRepo) : ViewModel() {
     //StateFlow is a state holder that is hot (always active)
     // and emits the latest value to any collector
     // (similar to RxJava's BehaviorSubject).
-lateinit var welcom:Welcome
+
     // خنا بنستخدم seald class عشان نعرف حاله الاتصال
     // indicating that when the flow is first created, it's in a loading state
     // (commonly used for network operations).
     private val weatherCurrentLoad = MutableStateFlow<ResponseState<Welcome>>(ResponseState.Loading)
     val weathercurrent = weatherCurrentLoad.asStateFlow()
 
-    private val currentWeatherLive = MutableLiveData<Welcome>()
+//    private val currentWeatherLive = MutableLiveData<Welcome>()
 
 
 

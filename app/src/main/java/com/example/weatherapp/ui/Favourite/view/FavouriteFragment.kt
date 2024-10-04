@@ -18,6 +18,7 @@ import com.example.weatherapp.Model.WeatherRepoImp
 import com.example.weatherapp.databinding.FragmentFavouriteBinding
 import com.example.weatherapp.network.RetrofitHelper
 import com.example.weatherapp.network.weatherRemotImp
+import com.example.weatherapp.ui.Favourite.view.FavouriteFragmentDirections
 import com.example.weatherapp.ui.Favourite.viewModel.FavouriteFactory
 import com.example.weatherapp.ui.Favourite.viewModel.FavouriteViewModel
 import kotlinx.coroutines.flow.collect
@@ -88,7 +89,10 @@ class FavouriteFragment : Fragment() {
         val onItemClick: (FaviouritWeather) -> Unit = { favoriteWeather ->
             Log.i("FavoriteFragment", "Latitude: ${favoriteWeather.lat}, Longitude: ${favoriteWeather.lon}")
             val action = FavouriteFragmentDirections.actionNavFavToNavHome().apply {
+                favoriteWeather.lat
+                favoriteWeather.lon
                 latlon = com.example.weatherapp.Model.LocationLatLngPojo("fav_location", favoriteWeather.lat, favoriteWeather.lon)
+                Log.d("latlong", "onViewCreated:$latlon ")
             }
 
             findNavController().navigate(action)

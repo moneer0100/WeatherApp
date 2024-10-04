@@ -20,6 +20,9 @@
             app:argType="com.example.weatherapp.Model.LocationLatLngPojo"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_nav_home_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
     </fragment>
 
     <fragment
@@ -37,7 +40,7 @@
 
     <fragment
         android:id="@+id/nav_alert"
-        android:name="com.example.weatherapp.ui.alert.AlertFragment"
+        android:name="com.example.weatherapp.ui.alert.View.AlertFragment"
         android:label="@string/Alert"
         tools:layout="@layout/fragment_alert" >
         <action

@@ -4,6 +4,7 @@ import Welcome
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -21,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.Constant
 import com.example.weatherapp.DataBase.DatabaseClient
@@ -43,18 +45,23 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-
+const val LOCATION_DIALOG_SHOWN = "locationDialogShown"
 class HomeFragment : Fragment() {
     private lateinit var dayilyAdapter: HomeDayAdapter
     private lateinit var locationManager:LocationManager
     private lateinit var hourlyAdapter: HomeHourlyAdapter
+    private var isLocationReceived = false
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val MY_LOCATION_PERMISSION_ID = 5005
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
-    lateinit var langauages:String
-    lateinit var unitss:String
-    private lateinit var sharedPreferencesSettings: SharedPreferences
+    private lateinit var locationFav:String
+    private lateinit var langauages: String
+    private lateinit var unitss: String
+
+
+
+
     lateinit var sharedPreferences:SharedPreferences
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -76,23 +83,44 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+
+        sharedPreferences = requireContext().getSharedPreferences("LocationUsedMethod", Context.MODE_PRIVATE)
+        sharedPreferences = requireContext().getSharedPreferences(
+            Constant.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE
+        )
+        langauages = sharedPreferences.getString(Constant.LANGUAGE_KEY, Constant.Enum_lANGUAGE.en.toString()).toString()
+        unitss = sharedPreferences.getString(Constant.UNITS_KEY, Constant.ENUM_UNITS.metric.toString()).toString()
         setupRecyclerView()
         initializeLocationClient()
+        transicationDatawithArgs()
         checkLocationSettings()
-        sharedPreferences = requireContext().getSharedPreferences("LocationUsedMethod", Context.MODE_PRIVATE)
-        langauages = sharedPreferences.getString(
-            Constant.LANGUAGE_KEY,
-            Constant.Enum_lANGUAGE.en.toString()
-        ).toString()
-
-        unitss = sharedPreferences.getString(
-            Constant.UNITS_KEY,
-            Constant.ENUM_UNITS.metric.toString()
-        ).toString()
+//        locationFav = requireContext().getString(1,"fav_location")
 
     }
+    fun transicationDatawithArgs(){
+        val args = HomeFragmentArgs.fromBundle(requireArguments())
+        val latLng = args.latlon
+        if (latLng != null && !isLocationReceived) {
+            fetchWeathercurrentData(LatLng(latLng.lat, latLng.lng), langauages, unitss)
+            fetchWeatherforcastData(LatLng(latLng.lat, latLng.lng), langauages, unitss)
+            isLocationReceived = true
+        } else {
+            val locationDialogShown = sharedPreferences.getBoolean(LOCATION_DIALOG_SHOWN, false)
+            if (!locationDialogShown) {
+                showLocationDialog()
+                sharedPreferences.edit().putBoolean(LOCATION_DIALOG_SHOWN, true).apply()
+            } else {
+                val locationMethod = sharedPreferences.getString("Location_Method", "Use GPS")
+                handleLocationMethod(locationMethod)
+            }
+        }
+    }
+
 
     private fun setupRecyclerView() {
         hourlyAdapter = HomeHourlyAdapter(requireContext())
@@ -124,6 +152,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+
     override fun onStart() {
         super.onStart()
         checkLocationSettings()
@@ -148,12 +177,21 @@ class HomeFragment : Fragment() {
             MY_LOCATION_PERMISSION_ID
         )
     }
+    private fun handleLocationMethod(locationMethod: String?) {
+        sharedPreferences.edit().putString("Location_Method", locationMethod).apply()
+        when (locationMethod) {
+            "Use GPS" -> useGPS()
+            "Open Map" -> openMap()
+        }
+    }
+
 
     @SuppressLint("SetTextI18n")
     private fun getCityAndAddress(latitude: Double, longitude: Double) {
         try {
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
             val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+
 
             if (addresses != null && addresses.isNotEmpty()) {
                 val address = addresses[0]
@@ -188,15 +226,16 @@ class HomeFragment : Fragment() {
                         longitude = location.longitude
 
                         // Check if fragment is added before fetching weather data
-                        if (isAdded) {
-                            fetchWeathercurrentData(LatLng(latitude, longitude), langauages, unitss)
-                            fetchWeatherforcastData(LatLng(latitude, longitude), langauages, unitss)
-                            getCityAndAddress(latitude, longitude)
-                        }
-                    } ?: Log.e("HomeFragment", "Location is null")
+
+                        fetchWeathercurrentData(LatLng(latitude, longitude), langauages, unitss)
+                        fetchWeatherforcastData(LatLng(latitude, longitude), langauages, unitss)
+                        getCityAndAddress(latitude, longitude)
+                        fusedLocationProviderClient.removeLocationUpdates(this)
+                    }
                 }
+
             },
-            Looper.getMainLooper()
+            Looper.myLooper()
         )
     }
     private fun fetchWeatherforcastData(latLng: LatLng,language: String,units:String) {
@@ -213,7 +252,7 @@ class HomeFragment : Fragment() {
 
                         }
                         is ResponseState.Loading -> {
-                            // Optionally show loading UI
+                            //  show loading UI progresBar
                         }
                         is ResponseState.Error -> {
                             displayError(viewStateResult.message.toString())
@@ -341,8 +380,40 @@ class HomeFragment : Fragment() {
             }
         }
     }
+    private fun openMap() {
+        var tye = "Home"
+        var action :HomeFragmentDirections.ActionNavHomeToMapsFragment =
+            HomeFragmentDirections.actionNavHomeToMapsFragment().apply {
+                type = tye
+            }
+        Navigation.findNavController(requireView()).navigate(action)
+    }
 
+    private fun showLocationDialog() {
+        val items = arrayOf("Use GPS", "Open Map")
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Select location method")
+            .setItems(items) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        useGPS()
+                        Log.i("TAG", "showLocationDialog: =============================== GPS")
+                    }
+                    1 -> {
+                        openMap()
+                        Log.i("TAG", "showLocationDialog: =============================== MAP")
 
+                    }
+                }
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
+    }
+
+    private fun useGPS() {
+        checkLocationSettings()
+    }
 
 
     private fun displayError(message: String) {
@@ -410,6 +481,32 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onResume() {
+        super.onResume()
+        val argsLatLng =  HomeFragmentArgs.fromBundle(requireArguments()).latlon
+        if (argsLatLng != null) {
+            fetchWeathercurrentData(LatLng(argsLatLng.lat, argsLatLng.lng),langauages,unitss)
+            fetchWeatherforcastData(LatLng(argsLatLng.lat, argsLatLng.lng),langauages,unitss)
+
+            Log.i("TAG", "onResume: ================")
+        } else {
+            val locationDialogShown = sharedPreferences.getBoolean(LOCATION_DIALOG_SHOWN, false)
+            Log.i("HomeFragment", "Location dialog shown: $locationDialogShown")
+
+            if (!locationDialogShown) {
+                showLocationDialog()
+                sharedPreferences.edit().putBoolean(LOCATION_DIALOG_SHOWN, true).apply()
+                sharedPreferences.edit().putString("Location_Method", "Use GPS").apply()
+                Log.i("TAG", "onResume: Dialog")
+            } else {
+                val locationMethod = sharedPreferences.getString("Location_Method", "Use GPS")
+                handleLocationMethod(locationMethod)
+                Log.i("TAG", "onResume: not Dialog")
+            }
+        }
+    }
+
 
     private fun getIcon(icon: String): Int {
         val iconValue: Int

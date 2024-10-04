@@ -37,4 +37,11 @@
     <string name="temperatur">temperature\n</string>
     <string name="title_activity_mapss">MapssActivity</string>
     <string name="title_activity_maps2">MapsActivity2</string>
+    <string name="notification_permission">Allow Access \n</string>
+    <string name="permission_request">Accept</string>
+    <string name="notification_permmission_body">Please grant permission to access the app settings</string>
+    <string name="dismiss">Refuse</string>
+    <string name="ask_del_fav">Are You sure , you want to delete it?</string>
+    <string name="del_item">Delete</string>
+    <string name="some_thing_want_rong">Something went wrong\n</string>
 </resources>

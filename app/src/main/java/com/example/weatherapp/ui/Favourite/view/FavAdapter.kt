@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapp.Model.AlertPojo
 import com.example.weatherapp.Model.DailyWeather
 import com.example.weatherapp.Model.FaviouritWeather
 import com.example.weatherapp.databinding.FavItemBinding

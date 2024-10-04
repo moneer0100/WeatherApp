@@ -51,6 +51,22 @@ class WeatherRepoImp(
     override suspend fun deletWeatherFav(fav: FaviouritWeather) {
       return weatherLocalData.deleteWeather(fav)
     }
+        /////alert
+    override fun getAlert(): Flow<List<AlertPojo>> {
+            return weatherLocalData.getAlert()
+    }
+
+    override suspend fun insertAlert(alert: AlertPojo) {
+       return weatherLocalData.insertAlert(alert)
+    }
+
+    override suspend fun deleteAlert(alert: AlertPojo) {
+        return weatherLocalData.deleteAlert(alert)
+    }
+
+    override fun getAlertWithId(id: String): AlertPojo {
+       return weatherLocalData.getAlertWithId(id)
+    }
 
 
 }

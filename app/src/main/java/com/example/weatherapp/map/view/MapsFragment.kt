@@ -22,6 +22,8 @@ import com.example.weatherapp.Model.WeatherRepoImp
 import com.example.weatherapp.Model.getAddress
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentMapsBinding
+import com.example.weatherapp.map.view.MapsFragmentArgs
+import com.example.weatherapp.map.view.MapsFragmentDirections
 import com.example.weatherapp.map.viewModel.MapViewModel
 import com.example.weatherapp.map.viewModel.MapsFactory
 import com.example.weatherapp.network.RetrofitHelper

@@ -1,6 +1,7 @@
 package com.example.weatherapp.DataBase
 
 import Welcome
+import com.example.weatherapp.Model.AlertPojo
 import com.example.weatherapp.Model.FaviouritWeather
 import kotlinx.coroutines.flow.Flow
 
@@ -30,5 +31,22 @@ class WeatherLocalDataImp(private val dao: Dao):WeatherLocaSource {
 
     override suspend fun deleteWeather(favWeather: FaviouritWeather) {
         return dao.deleteWeather(favWeather)
+    }
+    //////alert
+
+    override fun getAlert(): Flow<List<AlertPojo>> {
+        return dao.getAlert()
+    }
+
+    override suspend fun insertAlert(alert: AlertPojo) {
+     return dao.insertAlert(alert)
+    }
+
+    override suspend fun deleteAlert(alert: AlertPojo) {
+   return dao.deleteAlert(alert)
+    }
+
+    override fun getAlertWithId(id: String): AlertPojo {
+        return dao.getAlertWithId(id)
     }
 }

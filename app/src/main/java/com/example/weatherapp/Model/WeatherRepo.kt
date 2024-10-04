@@ -24,4 +24,10 @@ interface WeatherRepo
 fun getAllWeatherFavoirit():Flow<List<FaviouritWeather>>
 suspend fun insertDataFaviourit(fav:FaviouritWeather)
 suspend fun deletWeatherFav(fav: FaviouritWeather)
+
+///////alert
+    fun getAlert():Flow<List<AlertPojo>>
+    suspend fun insertAlert(alert:AlertPojo)
+    suspend fun deleteAlert(alert:AlertPojo)
+    fun getAlertWithId(id: String): AlertPojo
 }
