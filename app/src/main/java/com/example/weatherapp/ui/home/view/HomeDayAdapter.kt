@@ -35,6 +35,7 @@ class HomeDayAdapter(requireContext: Context) :ListAdapter<DailyWeather, HomeDay
      holder.binding.dateDay.text=forcastDay.dayOfWeek
         holder.binding.degreeDay.text=forcastDay.maxTemperature.toString()
 //        holder.binding.degreepm.text=forcastDay.minTemperature.toString()
+
         holder.binding.textView.text=forcastDay.date
         holder.binding.description.text=forcastDay.weatherDescription
         holder.binding.imageView2.setImageResource(getIcon(forcastDay.icon))

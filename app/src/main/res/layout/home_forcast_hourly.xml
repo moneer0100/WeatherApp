@@ -21,7 +21,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:background="#A96233C8">
+            android:background="@drawable/w">
 
             <TextView
                 android:id="@+id/timeid"

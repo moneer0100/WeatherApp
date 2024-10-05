@@ -252,7 +252,7 @@ class HomeFragment : Fragment() {
 
                         }
                         is ResponseState.Loading -> {
-                            //  show loading UI progresBar
+
                         }
                         is ResponseState.Error -> {
                             displayError(viewStateResult.message.toString())
@@ -319,10 +319,11 @@ class HomeFragment : Fragment() {
                             if (isAdded) {
                                 displayWeatherDatacurrent(viewStateResult.data, language, units)
                                 saveWeatherDataToFile(viewStateResult.data, "weather_data_current.txt")
+                                binding.progressBar3.visibility = View.GONE
                             }
                         }
                         is ResponseState.Loading -> {
-                            // Optionally show loading UI
+                            binding.progressBar3.visibility = View.VISIBLE
                         }
                         is ResponseState.Error -> {
                             displayError(viewStateResult.message.toString())

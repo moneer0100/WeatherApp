@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName="favorite")
 data class FaviouritWeather(
-@PrimaryKey(autoGenerate = true)var roomId:Long,
-
-    val adress:String,
+@PrimaryKey(autoGenerate = true)
+var roomId:Long,
+ val adress:String,
     val lat:Double,
     val lon: Double
 )

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="setting">الاعدادات</string>
+    <string name="favourite">المفضله</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">مرحبا</string>
+    <string name="Alert">المنبه</string>
+    <string name="CIty">المدينه</string>
+    <string name="Statue">الحاله</string>
+    <string name="Temperature">درجه الحراره</string>
+    <string name="Time">الوقت</string>
+    <string name="temp" />
+    <string name="temperatur">درجه الحراره\n</string>
+    <string name="title_activity_mapss">MapssActivity</string>
+    <string name="title_activity_maps2">MapsActivity2</string>
+    <string name="notification_permission">Allow Access \n</string>
+    <string name="permission_request">القبول</string>
+    <string name="notification_permmission_body">Please grant permission to access the app settings</string>
+    <string name="dismiss">الرفض</string>
+    <string name="ask_del_fav">Are You sure , you want to delete it?</string>
+    <string name="del_item">مسح</string>
+    <string name="some_thing_want_rong">حدث شي خاطئ\n</string>
+    <string name="Language" />
+    <string name="language">اللغه</string>
+    <string name="english">الانجليزيه</string>
+    <string name="arabic">العربيه</string>
+    <string name="location">الموقع</string>
+    <string name="gps">جي بي اس</string>
+    <string name="map">الخريطه</string>
+    <string name="tempreature">درجه الحراره</string>
+    <string name="celsius"> سيليوز</string>
+    <string name="fahrenheit">فهرنهيت</string>
+    <string name="kelvin">كيلفين</string>
+
+
+
+</resources>

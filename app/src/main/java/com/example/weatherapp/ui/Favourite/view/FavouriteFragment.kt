@@ -29,7 +29,7 @@ class FavouriteFragment : Fragment() {
     private var _binding: FragmentFavouriteBinding? = null
     private val binding get() = _binding!!
 
-    // ViewModel instantiation with factory
+
     private val viewModel: FavouriteViewModel by viewModels {
         FavouriteFactory(
             WeatherRepoImp.getInstance(
@@ -69,6 +69,14 @@ class FavouriteFragment : Fragment() {
                         binding.recycleViewFav.visibility = View.VISIBLE
                         favAdapter.submitList(state.data)
                         Log.i("FavoriteFragment", "Success state: ${state.data}")
+
+                        if (state.data.isEmpty()) {
+                            binding.recycleViewFav.visibility = View.GONE
+                            binding.placeholderImage.visibility = View.VISIBLE // Show placeholder when no favorites
+                        } else {
+                            favAdapter.submitList(state.data)
+                            Log.i("FavoriteFragment", "Success state: ${state.data}")
+                        }
                     }
                     is FavState.Error -> {
                         Log.i("FavoriteFragment", "Error: ${state.message}")
