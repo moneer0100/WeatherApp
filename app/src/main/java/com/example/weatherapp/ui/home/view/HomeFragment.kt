@@ -40,7 +40,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.intellij.lang.annotations.Language
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -249,6 +248,7 @@ class HomeFragment : Fragment() {
                     when (viewStateResult) {
                         is ResponseState.Success -> {
                             displayWeatherDataforcast(viewStateResult.data,langauages,unitss)
+                            saveWeatherDataToFileforcast(viewStateResult.data, "weather_data_forcast.txt")
 
                         }
                         is ResponseState.Loading -> {
@@ -272,7 +272,16 @@ class HomeFragment : Fragment() {
             displayWeatherDataforcast(it, "", "")
         }
     }
-
+    private fun saveWeatherDataToFile(data: Welcome, fileName: String) {
+        val file = File(requireContext().filesDir, fileName)
+        val jsonString = Gson().toJson(data)
+        file.writeText(jsonString)
+    }
+    private fun saveWeatherDataToFileforcast(data: Forecast, fileName: String) {
+        val file = File(requireContext().filesDir, fileName)
+        val jsonString = Gson().toJson(data)
+        file.writeText(jsonString)
+    }
     private fun readWeatherDataFromFileforcast(): Forecast?{
         val fileName = "weather_data_forcast.txt"
         val file = File(requireContext().filesDir, fileName)
@@ -309,6 +318,7 @@ class HomeFragment : Fragment() {
                             // Check if binding is initialized
                             if (isAdded) {
                                 displayWeatherDatacurrent(viewStateResult.data, language, units)
+                                saveWeatherDataToFile(viewStateResult.data, "weather_data_current.txt")
                             }
                         }
                         is ResponseState.Loading -> {
@@ -328,9 +338,10 @@ class HomeFragment : Fragment() {
 
     private fun displayWeatherDatacurrent(weatherResponse: Welcome, language: String, units: String) {
         val currentWeather = weatherResponse.main
+        val current=weatherResponse.weather
         val temperatureUnit = getTemperatureUnit(units, language)
 
-        // If units is metric, the temperature is already in Celsius
+
         val temperatureValue = if (units == Constant.ENUM_UNITS.metric.toString()) {
             currentWeather.temp.toString()  // Assuming temp is already in Celsius
         } else if (language == Constant.Enum_lANGUAGE.ar.toString()) {
@@ -340,7 +351,8 @@ class HomeFragment : Fragment() {
         }
 
         binding.temperatureId.text = "$temperatureValue $temperatureUnit"
-        binding.statuId.text = "${currentWeather.pressure}"
+        // change in dicription
+        binding.statuId.text = "${current.get(0).description}"
 
         // Set the weather icon
         val weatherIcon = weatherResponse.weather.firstOrNull()?.icon ?: "01d" // Default icon if not found
@@ -349,7 +361,8 @@ class HomeFragment : Fragment() {
 
     private fun displayWeatherDataforcast(weatherResponseForecast: Forecast, language: String, units: String) {
         val forecastList = weatherResponseForecast.list
-        val temperatureUnit = getTemperatureUnit(units, language)
+
+
 
         // Convert daily and hourly weather data
         val convertDailyWeather = convertToDailyWeather(forecastList)
@@ -358,6 +371,7 @@ class HomeFragment : Fragment() {
         // Submit the data to the adapters
         hourlyAdapter.submitList(convertHourlyWeather)
         dayilyAdapter.submitList(convertDailyWeather)
+
     }
 
     private fun getTemperatureUnit(units: String, language: String): String {

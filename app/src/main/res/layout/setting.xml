@@ -1,14 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.setting.Setting">
+    tools:context=".ui.setting.Setting" >
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="188dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="11dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:cardCornerRadius="8in"
+        app:layout_constraintTop_toTopOf="parent" >
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/w">
+
+            <TextView
+                android:id="@+id/langid"
+                android:layout_width="178dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="104dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="103dp"
+
+                android:text="@string/language"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <RadioGroup
+                android:id="@+id/radiolanid"
+                android:layout_width="204dp"
+                android:layout_height="116dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="76dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/langid">
+
+                <RadioButton
+                    android:id="@+id/englishbtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/english"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/arabicbtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/arabic"
+                    android:textSize="16sp" />
+            </RadioGroup>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView3"
+        android:layout_width="match_parent"
+        app:cardCornerRadius="8in"
+        android:layout_height="188dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/w">
+
+            <TextView
+                android:id="@+id/locationid"
+                android:layout_width="178dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+
+                android:layout_marginEnd="104dp"
+                android:text="@string/location"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <RadioGroup
+                android:id="@+id/radiolocaationid"
+                android:layout_width="145dp"
+                android:layout_height="117dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="136dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/locationid">
+
+                <RadioButton
+                    android:id="@+id/gpsid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/gps"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/mapid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/map" />
+            </RadioGroup>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="409dp"
+        android:layout_height="188dp"
+        android:layout_marginTop="36dp"
+        app:cardCornerRadius="8in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView3" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/w">
+
+            <TextView
+                android:id="@+id/tempid"
+                android:layout_width="178dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="125dp"
+
+                android:text="@string/tempreature"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+               />
+
+            <RadioGroup
+                android:id="@+id/radiotempid"
+                android:layout_width="175dp"
+                android:layout_height="122dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="125dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tempid">
+
+                <RadioButton
+                    android:id="@+id/fahrenheitid"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:checked="true"
+                    android:text="@string/fahrenheit"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/celisid"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:checked="true"
+                    android:text="@string/celsius"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/kelvinid"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:checked="true"
+                    android:minHeight="48dp"
+                    android:text="@string/kelvin"
+                    android:textSize="16sp" />
+            </RadioGroup>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

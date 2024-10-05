@@ -56,8 +56,8 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-private const val CHANNEL_ID = "my_channel_id"
-private const val NOTIFICATION_ID = 1
+//private const val CHANNEL_ID = "my_channel_id"
+//private const val NOTIFICATION_ID = 1
 class AlertFragment : Fragment() {
     private lateinit var notificationManager: NotificationManager
     private lateinit var alertViewModel: AlertViewModel

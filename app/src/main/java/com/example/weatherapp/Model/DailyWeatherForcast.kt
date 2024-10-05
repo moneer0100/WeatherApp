@@ -6,38 +6,32 @@ import java.util.*
 data class DailyWeather(
     val dayOfWeek: String,
     val date: String,
-    val maxTemperature: Double,
-    val minTemperature: Double,
+    val maxTemperature: String,
+//    val minTemperature: Double,
     val weatherDescription: String,
     val icon: String
 )
 
 fun convertToDailyWeather(dailyItems: List<ListElement>): List<DailyWeather> {
-    val dailyWeatherMap = mutableMapOf<String, MutableList<ListElement>>()
+    val dailyWeatherMap = dailyItems.groupBy { getDate(it.dt) } // Group by date
 
-    for (dailyItem in dailyItems) {
-        val date = getDate(dailyItem.dt) // Group by date (yyyy-MM-dd)
-        if (dailyWeatherMap.containsKey(date)) {
-            dailyWeatherMap[date]?.add(dailyItem)
-        } else {
-            dailyWeatherMap[date] = mutableListOf(dailyItem)
-        }
-    }
+    val dailyWeatherList = dailyWeatherMap.map { (date, dailyGroup) ->
+        // Convert and round max temperature to 1 decimal place and add "°C"
+        val maxTemperature = "${String.format("%.1f", dailyGroup.maxOf { it.main.temp - 273.15 })}°C"
 
-    val dailyWeatherList = dailyWeatherMap.map { (date, dailyItems) ->
+        // Convert and round min temperature to 1 decimal place and add "°C" (if needed)
+//        val minTemperature = "${String.format("%.1f", dailyGroup.minOf { it.main.tempMin - 273.15 })}°C"
 
-        val maxTemperature = dailyItems.maxOf { it.main.tempMax }
-        val minTemperature = dailyItems.minOf { it.main.tempMin}
+        val weatherDescription = dailyGroup.firstOrNull()?.weather?.firstOrNull()?.description ?: ""
+        val icon = dailyGroup.firstOrNull()?.weather?.firstOrNull()?.icon ?: ""
 
-        val weatherDescription = dailyItems.firstOrNull()?.weather?.firstOrNull()?.description ?: ""
-        val icon = dailyItems.firstOrNull()?.weather?.firstOrNull()?.icon ?: ""
+        val dayOfWeek = getDayOfWeek(dailyGroup.firstOrNull()?.dt ?: 0L)
 
-        val dayOfWeek = getDayOfWeek(dailyItems.firstOrNull()?.dt ?: 0L)
-   DailyWeather(
+        DailyWeather(
             dayOfWeek = dayOfWeek,
             date = date,
             maxTemperature = maxTemperature,
-            minTemperature = minTemperature,
+//            minTemperature = minTemperature, // Uncomment if needed
             weatherDescription = weatherDescription,
             icon = icon
         )
@@ -45,6 +39,7 @@ fun convertToDailyWeather(dailyItems: List<ListElement>): List<DailyWeather> {
 
     return dailyWeatherList
 }
+
 
 private fun getDayOfWeek(timestamp: Long): String {
     val calendar = Calendar.getInstance()

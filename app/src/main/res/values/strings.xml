@@ -44,4 +44,15 @@
     <string name="ask_del_fav">Are You sure , you want to delete it?</string>
     <string name="del_item">Delete</string>
     <string name="some_thing_want_rong">Something went wrong\n</string>
+    <string name="Language" />
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="location">Location</string>
+    <string name="gps">GPS</string>
+    <string name="map">Map</string>
+    <string name="tempreature">Tempreature</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="kelvin">Kelvin</string>
 </resources>

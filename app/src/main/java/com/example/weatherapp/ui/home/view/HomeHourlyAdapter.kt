@@ -21,7 +21,7 @@ class HomeHourlyAdapter(val context: Context): ListAdapter<HourlyWeather, HomeHo
 
     class MyDiffutil: DiffUtil.ItemCallback<HourlyWeather>() {
         override fun areItemsTheSame(oldItem: HourlyWeather, newItem: HourlyWeather): Boolean {
-            return oldItem.hour == newItem.hour// Assuming ListElement has an 'id' field
+            return oldItem.icon == newItem.icon// Assuming ListElement has an 'id' field
         }
 
         override fun areContentsTheSame(oldItem: HourlyWeather, newItem: HourlyWeather): Boolean {
@@ -47,8 +47,8 @@ class HomeHourlyAdapter(val context: Context): ListAdapter<HourlyWeather, HomeHo
     inner class ViewHolder(var binding: HomeForcastHourlyBinding): RecyclerView.ViewHolder(binding.root){
         fun bindData(hourlyWeather: HourlyWeather) {
             binding.apply {
-                timeid.text =hourlyWeather.hour.toString()
-                textAm.text =hourlyWeather.amPm.toString()
+                timeid.text =hourlyWeather.time.toString()
+//              textAm.text =hourlyWeather.amPm.toString()
                 tempH.text =hourlyWeather.temperature.toString()
                 iconH.setImageResource(getIcon(hourlyWeather.icon))
 
