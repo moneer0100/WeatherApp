@@ -16,11 +16,11 @@ fun convertToDailyWeather(dailyItems: List<ListElement>): List<DailyWeather> {
     val dailyWeatherMap = dailyItems.groupBy { getDate(it.dt) } // Group by date
 
     val dailyWeatherList = dailyWeatherMap.map { (date, dailyGroup) ->
-        // Convert and round max temperature to 1 decimal place and add "°C"
-        val maxTemperature = "${String.format("%.1f", dailyGroup.maxOf { it.main.temp - 273.15 })}°C"
+        // Convert max temperature to an integer and add "°C"
+        val maxTemperature = "${String.format("%.0f", dailyGroup.maxOf { it.main.temp - 273.15 })}°C"
 
-        // Convert and round min temperature to 1 decimal place and add "°C" (if needed)
-//        val minTemperature = "${String.format("%.1f", dailyGroup.minOf { it.main.tempMin - 273.15 })}°C"
+        // Convert min temperature to an integer and add "°C" (if needed)
+//        val minTemperature = "${String.format("%.0f", dailyGroup.minOf { it.main.tempMin - 273.15 })}°C"
 
         val weatherDescription = dailyGroup.firstOrNull()?.weather?.firstOrNull()?.description ?: ""
         val icon = dailyGroup.firstOrNull()?.weather?.firstOrNull()?.icon ?: ""

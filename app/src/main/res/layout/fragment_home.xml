@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
 
 
-    android:background="#9A9E71"
+    android:background="@drawable/weath"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +22,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="108dp"
-            android:hint="city"
+
             android:textColor="#606D34"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -34,21 +34,23 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
             android:layout_marginEnd="180dp"
-            android:hint="date"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"
-            android:layout_width="407dp"
-
+            android:layout_width="300dp"
             android:layout_height="180dp"
             android:layout_margin="20dp"
             android:layout_marginStart="1dp"
             android:layout_marginTop="68dp"
             android:layout_marginEnd="1dp"
-            android:elevation="20dp"
-            app:cardCornerRadius="8dp"
+            android:background="@android:color/transparent"
+            android:elevation="30dp"
+
+            android:visibility="visible"
+            app:cardCornerRadius="30dp"
 
 
             app:cardElevation="40dp"
@@ -57,26 +59,28 @@
             app:layout_constraintTop_toBottomOf="@+id/date_id">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
                 android:layout_height="184dp"
-                android:background="@drawable/w">
+
+
+                android:background="#DD285273">
 
                 <ProgressBar
                     android:id="@+id/progressBar3"
                     style="?android:attr/progressBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    app:layout_constraintEnd_toEndOf="@+id/temperature_id"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/statu_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="180dp"
-                    android:textSize="20dp"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginEnd="188dp"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -85,20 +89,20 @@
 
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="192dp"
-                    android:textSize="20sp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginEnd="104dp"
+                    android:textSize="48sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/statu_id" />
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="76dp"
-                    android:layout_height="39dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="180dp"
+                    android:layout_width="50dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="56dp"
+                    android:layout_marginEnd="36dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/temperature_id"
+                    app:layout_constraintTop_toTopOf="@+id/progressBar3"
                     tools:src="@tools:sample/avatars" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

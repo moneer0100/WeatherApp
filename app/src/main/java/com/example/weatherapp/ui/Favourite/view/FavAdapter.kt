@@ -28,6 +28,7 @@ return ViewHolder(binding,deleteClickListner,itemClickListner)
     override fun onBindViewHolder(holder:ViewHolder, position: Int) {
         val fav=getItem(position)
         holder.bind(fav)
+
     }
 
 
@@ -36,10 +37,12 @@ class ViewHolder( private val binding: FavItemBinding,
      private val deleteClickListner:(FaviouritWeather)->Unit
       ,  private val itemClickListner:(FaviouritWeather)->Unit)
         :RecyclerView.ViewHolder(binding.root){
+
     fun bind(favoriteWeather: FaviouritWeather) {
         binding.apply {
             favLocation.text = favoriteWeather.adress
             root.setOnClickListener { itemClickListner(favoriteWeather) }
+
             imageView4.setOnClickListener {
                 deleteClickListner(favoriteWeather)
             }

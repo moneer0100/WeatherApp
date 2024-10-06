@@ -28,9 +28,9 @@ fun convertToHourlyWeather(hourlyWeather: List<ListElement>): List<HourlyWeather
             continue // Skip this entry if the hour has already been processed
         }
 
-        // Convert temperature from Kelvin to Celsius and format to 1 decimal place
+        // Convert temperature from Kelvin to Celsius and format to an integer
         val temperatureInCelsius = hourlyItem.main.temp - 273.15
-        val formattedTemperature = "${String.format("%.1f", temperatureInCelsius)}°C" // Add "°C"
+        val formattedTemperature = "${String.format("%.0f", temperatureInCelsius)}°C" // Add "°C"
 
         // Get the weather icon (if available)
         val icon = hourlyItem.weather.firstOrNull()?.icon ?: ""
@@ -50,4 +50,5 @@ fun convertToHourlyWeather(hourlyWeather: List<ListElement>): List<HourlyWeather
 
     return hourlyWeatherList
 }
+
 

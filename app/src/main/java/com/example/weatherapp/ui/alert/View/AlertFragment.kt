@@ -15,7 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -164,7 +163,7 @@ class AlertFragment : Fragment() {
         val alertDialog = materialAlertDialogBuilder.setView(customAlertDialogBinding.root)
             .setBackground(
                 ResourcesCompat.getDrawable(
-                    resources, R.drawable.background, requireActivity().theme
+                    resources, R.drawable.backgroundw, requireActivity().theme
                 )
             ).setCancelable(false).show()
         setTimeAndDateInDialog()
