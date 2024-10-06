@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">الطقس</string>
+    <string name="action_settings">الاعدادات</string>
+    <string name="menu_home">الرئيسيه</string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="setting">الاعدادات</string>
+    <string name="setting">الضبط</string>
     <string name="favourite">المفضله</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">مرحبا</string>
@@ -18,7 +21,7 @@
     <string name="permission_request">القبول</string>
     <string name="notification_permmission_body">Please grant permission to access the app settings</string>
     <string name="dismiss">الرفض</string>
-    <string name="ask_del_fav">Are You sure , you want to delete it?</string>
+    <string name="ask_del_fav">هل تريد المسح؟</string>
     <string name="del_item">مسح</string>
     <string name="some_thing_want_rong">حدث شي خاطئ\n</string>
     <string name="Language" />

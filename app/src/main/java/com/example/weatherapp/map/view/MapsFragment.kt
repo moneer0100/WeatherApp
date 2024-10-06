@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -31,7 +32,6 @@ import com.example.weatherapp.network.weatherRemotImp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.Dispatchers
@@ -80,26 +80,31 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun setupHomeNavigation() {
+
         binding.mapBtn.setOnClickListener {
+            showSaveLocationDialog{
             val action = MapsFragmentDirections.actionMapsFragmentToNavHome().apply {
                 latlon = LocationLatLngPojo(
                     "Map",
                     selectedLatLng.latitude,
                     selectedLatLng.longitude
                 )
-                locationSharedPreferences.edit()
-                    .putFloat(Constant.MAP_LAT, selectedLatLng.latitude.toFloat())
-                    .putFloat(Constant.MAP_LON, selectedLatLng.longitude.toFloat())
-                    .apply()
-                Log.i("TAG", "LocationLatLngPojo: { ${selectedLatLng.latitude}, ${selectedLatLng.longitude} }")
             }
+            // Save location in shared preferences
+            locationSharedPreferences.edit()
+                .putFloat(Constant.MAP_LAT, selectedLatLng.latitude.toFloat())
+                .putFloat(Constant.MAP_LON, selectedLatLng.longitude.toFloat())
+                .apply()
+
+            Log.i("MapsFragment", "Navigating Home with location: $selectedLatLng")
             Navigation.findNavController(requireView()).navigate(action)
         }
-    }
+    }}
 
     private fun setupFavoriteSave() {
+
         binding.mapBtn.setOnClickListener {
-            Log.d("clicked", "setupFavoriteSave: ")
+            showSaveLocationDialog{
             lifecycleScope.launch(Dispatchers.IO) {
                 val favoriteWeather = FaviouritWeather(
                     roomId = 0,
@@ -108,30 +113,37 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     lon = selectedLatLng.longitude
                 )
                 viewModel.insertLocationFav(favoriteWeather)
+
                 withContext(Dispatchers.Main) {
+                    // Navigate to favorites after saving
+                    val action = MapsFragmentDirections.actionMapsFragmentToNavFav()
+                    Navigation.findNavController(requireView()).navigate(action)
                     Toast.makeText(requireContext(), "Location saved to favorites", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
+        }}
     }
 
     private fun setupSettingsNavigation() {
+
         binding.mapBtn.setOnClickListener {
+            showSaveLocationDialog{
             val action = MapsFragmentDirections.actionMapsFragmentToNavHome().apply {
                 latlon = LocationLatLngPojo(
                     "Map",
                     selectedLatLng.latitude,
                     selectedLatLng.longitude
                 )
-                locationSharedPreferences.edit()
-                    .putFloat(Constant.MAP_LAT, selectedLatLng.latitude.toFloat())
-                    .putFloat(Constant.MAP_LON, selectedLatLng.longitude.toFloat())
-                    .apply()
-                Log.i("MapFragment", "Setting: LocationLatLngPojo: { ${selectedLatLng.latitude}, ${selectedLatLng.longitude} }")
             }
+            locationSharedPreferences.edit()
+                .putFloat(Constant.MAP_LAT, selectedLatLng.latitude.toFloat())
+                .putFloat(Constant.MAP_LON, selectedLatLng.longitude.toFloat())
+                .apply()
+
+            Log.i("MapsFragment", "Navigating to Settings with location: $selectedLatLng")
             Navigation.findNavController(requireView()).navigate(action)
         }
-    }
+    }}
 
     private fun setupAlertNavigation() {
         binding.mapBtn.setOnClickListener {
@@ -142,6 +154,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     selectedLatLng.longitude
                 )
             }
+            Log.i("MapsFragment", "Navigating to Alert with location: $selectedLatLng")
             Navigation.findNavController(requireView()).navigate(action)
         }
     }
@@ -179,5 +192,21 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onDestroy() {
         super.onDestroy()
         binding.mapView.onDestroy()
+    }
+    private fun showSaveLocationDialog(onConfirm: () -> Unit) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Save Location")
+        builder.setMessage("Do you want to save the selected location?")
+
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            onConfirm()  // Proceed with the save or navigation
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()  // Cancel the action
+        }
+
+        builder.create().show()
     }
 }

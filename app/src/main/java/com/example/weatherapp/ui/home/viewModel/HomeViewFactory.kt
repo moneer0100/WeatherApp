@@ -3,6 +3,7 @@ package com.example.weatherapp.ui.home.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.Model.WeatherRepo
+import com.example.weatherapp.Model.WeatherRepoImp
 
 class HomeViewFactory(private val repos:WeatherRepo): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

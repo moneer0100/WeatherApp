@@ -83,7 +83,9 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
 
-    // Google Play Services
+
+    // Lottie
+    implementation ("com.airbnb.android:lottie:4.0.0")
 
 
 

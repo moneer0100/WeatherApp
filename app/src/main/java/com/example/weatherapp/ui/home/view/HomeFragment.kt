@@ -103,19 +103,39 @@ class HomeFragment : Fragment() {
     }
     fun transicationDatawithArgs(){
         val args = HomeFragmentArgs.fromBundle(requireArguments())
-        val latLng = args.latlon
-        if (latLng != null && !isLocationReceived) {
-            fetchWeathercurrentData(LatLng(latLng.lat, latLng.lng), langauages, unitss)
-            fetchWeatherforcastData(LatLng(latLng.lat, latLng.lng), langauages, unitss)
-            isLocationReceived = true
+        Log.i("HomeFragment", "Received args: ${args.latlon}")
+        val latitude = args.latlon?.lat
+        val longitude = args.latlon?.lng
+        Log.i("HomeFragment", "Received latitude: $latitude, longitude: $longitude")
+
+        if (latitude != null && longitude != null) {
+            if (!isLocationReceived) {
+
+                fetchWeathercurrentData(LatLng(latitude, longitude), langauages, unitss)
+                fetchWeatherforcastData(LatLng(latitude, longitude), langauages, unitss)
+                Log.i("HomeFragment", "Received after if statement: latitude: $latitude, longitude: $longitude")
+                isLocationReceived = true
+            }
         } else {
-            val locationDialogShown = sharedPreferences.getBoolean(LOCATION_DIALOG_SHOWN, false)
-            if (!locationDialogShown) {
-                showLocationDialog()
-                sharedPreferences.edit().putBoolean(LOCATION_DIALOG_SHOWN, true).apply()
+
+            val isLocationFromMapActivity = arguments?.getBoolean("isLocationFromMapActivity") ?: false
+
+            if (isLocationFromMapActivity) {
+                Log.i("HomeFragment", "Location is from MapActivity")
             } else {
-                val locationMethod = sharedPreferences.getString("Location_Method", "Use GPS")
-                handleLocationMethod(locationMethod)
+                Log.i("HomeFragment", "Location is not from MapActivity")
+                val locationDialogShown = sharedPreferences.getBoolean(LOCATION_DIALOG_SHOWN, false)
+                Log.i("HomeFragment", "Location dialog shown: $locationDialogShown")
+                if (!locationDialogShown) {
+                    showLocationDialog()
+                    sharedPreferences.edit().putBoolean(LOCATION_DIALOG_SHOWN, true).apply()
+                    sharedPreferences.edit().putString("Location_Method", "Use GPS").apply()
+                    Log.i("TAG", "onViewCreated: Dialog")
+                } else {
+                    val locationMethod = sharedPreferences.getString("Location_Method", "Use GPS")
+                    handleLocationMethod(locationMethod)
+                    Log.i("TAG", "onViewCreated: not Dialog")
+                }
             }
         }
     }
@@ -318,6 +338,7 @@ class HomeFragment : Fragment() {
                             // Check if binding is initialized
                             if (isAdded) {
                                 displayWeatherDatacurrent(viewStateResult.data, language, units)
+
                                 saveWeatherDataToFile(viewStateResult.data, "weather_data_current.txt")
                                 binding.progressBar3.visibility = View.GONE
                             }

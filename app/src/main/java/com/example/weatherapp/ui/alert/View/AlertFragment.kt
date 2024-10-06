@@ -30,7 +30,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
-import com.example.weatherapp.AlretState
+
 import com.example.weatherapp.Constant
 import com.example.weatherapp.DataBase.DatabaseClient
 import com.example.weatherapp.DataBase.WeatherLocalDataImp
@@ -43,6 +43,7 @@ import com.example.weatherapp.Model.setTime
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.AlertDialogBinding
 import com.example.weatherapp.databinding.FragmentAlertBinding
+import com.example.weatherapp.network.ResponseState
 import com.example.weatherapp.network.RetrofitHelper
 import com.example.weatherapp.network.weatherRemotImp
 import com.example.weatherapp.ui.alert.viewModel.AlertFactroy
@@ -123,10 +124,10 @@ class AlertFragment : Fragment() {
 
             alertViewModel.alert.collectLatest {
                 when (it) {
-                    is AlretState.Loading -> {
+                    is ResponseState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
                     }
-                    is AlretState.Sucsess -> {
+                    is ResponseState.Success -> {
                         adapter.submitList(it.data)
                         if (it.data.isNotEmpty()) {
                             binding.progressBar.visibility = View.GONE

@@ -33,6 +33,11 @@
         <action
             android:id="@+id/action_nav_fav_to_mapsFragment"
             app:destination="@id/mapsFragment" />
+        <argument
+            android:name="latlon"
+            app:argType="com.example.weatherapp.Model.LocationLatLngPojo"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_nav_fav_to_nav_home"
             app:destination="@id/nav_home" />
@@ -82,6 +87,9 @@
         <action
             android:id="@+id/action_mapsFragment_to_nav_alert"
             app:destination="@id/nav_alert" />
+        <action
+            android:id="@+id/action_mapsFragment_to_nav_fav"
+            app:destination="@id/nav_fav" />
     </fragment>
 
 
