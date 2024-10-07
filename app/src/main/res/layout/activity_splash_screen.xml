@@ -5,7 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#3D4885"
     tools:context=".SplashScreen">
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/splashAnmi"
         android:layout_width="match_parent"

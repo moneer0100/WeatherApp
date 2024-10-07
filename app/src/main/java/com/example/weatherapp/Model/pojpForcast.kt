@@ -51,7 +51,9 @@ data class Clouds(
 data class MainClass (
     val temp: Double,
     val feelsLike: Double,
+    @SerializedName("temp_min")
     val tempMin: Double,
+    @SerializedName("temp_max")
     val tempMax: Double,
     val pressure: Long,
     val seaLevel: Long,

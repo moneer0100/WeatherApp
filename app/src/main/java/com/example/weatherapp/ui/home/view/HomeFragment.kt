@@ -211,14 +211,24 @@ class HomeFragment : Fragment() {
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
             val addresses = geocoder.getFromLocation(latitude, longitude, 1)
 
-
             if (addresses != null && addresses.isNotEmpty()) {
                 val address = addresses[0]
                 val country = address.countryName ?: "Unknown country"
-                val fullAddress = address.getAddressLine(0) ?: "Unknown address"
+                val administrativeArea = address.adminArea ?: "Unknown administrative area" // State/Province
+                val locality = address.locality ?: "Unknown city" // City
+                val subLocality = address.subLocality ?: "Unknown neighborhood" // Neighborhood
+                val postalCode = address.postalCode ?: "Unknown postal code" // Postal Code
+                val fullAddress = address.getAddressLine(0) ?: "Unknown address" // Full address line
 
                 if (isAdded) {
-                    binding.cityId.text = "Country: $country\nAddress: $fullAddress"
+                    binding.cityId.text = """
+                    Country: $country
+                   $administrativeArea
+                    City: $locality
+                    Neighborhood: $subLocality
+                    Postal Code: $postalCode
+                    Address: $fullAddress
+                """.trimIndent()
                 }
             } else {
                 if (isAdded) {
@@ -232,6 +242,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
     @SuppressLint("MissingPermission")
     private fun getFreshLocation() {
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000) // 10 seconds
@@ -240,6 +251,7 @@ class HomeFragment : Fragment() {
             locationRequest,
             object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
+                    if (!isLocationReceived){
                     locationResult.lastLocation?.let { location ->
                         latitude = location.latitude
                         longitude = location.longitude
@@ -251,7 +263,7 @@ class HomeFragment : Fragment() {
                         getCityAndAddress(latitude, longitude)
                         fusedLocationProviderClient.removeLocationUpdates(this)
                     }
-                }
+                }}
 
             },
             Looper.myLooper()
@@ -387,14 +399,16 @@ class HomeFragment : Fragment() {
 
 
         // Convert daily and hourly weather data
-        val convertDailyWeather = convertToDailyWeather(forecastList)
-        val convertHourlyWeather = convertToHourlyWeather(forecastList)
+        val convertDailyWeather = convertToDailyWeather(forecastList,units,language)
+        val convertHourlyWeather = convertToHourlyWeather(forecastList,units,language)
 
         // Submit the data to the adapters
         hourlyAdapter.submitList(convertHourlyWeather)
         dayilyAdapter.submitList(convertDailyWeather)
 
     }
+
+
 
     private fun getTemperatureUnit(units: String, language: String): String {
         return when (language) {

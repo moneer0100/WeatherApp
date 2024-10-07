@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">الطقس</string>
+    <string name="settingg">الاعدادات</string>
     <string name="action_settings">الاعدادات</string>
     <string name="menu_home">الرئيسيه</string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>

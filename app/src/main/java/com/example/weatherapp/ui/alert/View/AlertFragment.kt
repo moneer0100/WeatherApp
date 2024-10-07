@@ -99,17 +99,11 @@ class AlertFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.floatingActionButton.setOnClickListener{
-            /*if (NetworkConnectivity.getInstance(requireActivity().application).isOnline())
-            {*/
+
             val action = AlertFragmentDirections.actionNavAlertToMapsFragment()
             action.type = Constant.ALERT_KEY
             Navigation.findNavController(it).navigate(action)
-            /*}else
-            {
-                Snackbar.make(requireView(), getString(R.string.check_your_connection), Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.dismiss)) {
-                    }.show()
-            }*/
+
         }
 
         val adapter = AlertAdapter(AlertAdapter.RemoveClickListener {

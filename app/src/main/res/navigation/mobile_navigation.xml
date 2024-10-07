@@ -60,8 +60,8 @@
     <fragment
         android:id="@+id/nav_setting"
         android:name="com.example.weatherapp.ui.setting.Setting"
-        android:label="setting"
-        tools:layout="@layout/setting" >
+        android:label="@string/settingg"
+        tools:layout="@layout/setting">
         <action
             android:id="@+id/action_nav_setting_to_mapsFragment"
             app:destination="@id/mapsFragment" />

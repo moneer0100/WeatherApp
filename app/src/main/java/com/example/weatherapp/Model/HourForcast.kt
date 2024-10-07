@@ -1,5 +1,6 @@
 package com.example.weatherapp.Model
 
+import com.example.weatherapp.Constant
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -10,7 +11,7 @@ data class HourlyWeather(
     val icon: String
 )
 
-fun convertToHourlyWeather(hourlyWeather: List<ListElement>): List<HourlyWeather> {
+fun convertToHourlyWeather(hourlyWeather: List<ListElement>, units: String, language: String): List<HourlyWeather> {
     val hourlyWeatherList = mutableListOf<HourlyWeather>()
     val calendar = Calendar.getInstance()
     val timeFormat = SimpleDateFormat("hh:mma", Locale.getDefault()) // Format for 12-hour time with AM/PM
@@ -28,21 +29,26 @@ fun convertToHourlyWeather(hourlyWeather: List<ListElement>): List<HourlyWeather
             continue // Skip this entry if the hour has already been processed
         }
 
-        // Convert temperature from Kelvin to Celsius and format to an integer
-        val temperatureInCelsius = hourlyItem.main.temp - 273.15
-        val formattedTemperature = "${String.format("%.0f", temperatureInCelsius)}°C" // Add "°C"
+        // Convert temperature based on units
+        val temperature = when (units) {
+            Constant.ENUM_UNITS.metric.toString() -> hourlyItem.main.temp - 273.15 // Celsius
+            Constant.ENUM_UNITS.imperial.toString() -> (hourlyItem.main.temp - 273.15) * 9 / 5 + 32 // Fahrenheit
+            Constant.ENUM_UNITS.standard.toString() -> hourlyItem.main.temp // Kelvin
+            else -> hourlyItem.main.temp - 273.15 // Default to Celsius
+        }
 
-        // Get the weather icon (if available)
+        // Get the temperature unit symbol for the given language
+//        val tempUnit = getTemperatureUnit(units, language)
+        val formattedTemperature = "${String.format("%.0f", temperature)} °" // Include unit symbol
+
         val icon = hourlyItem.weather.firstOrNull()?.icon ?: ""
 
-        // Add the formatted time to the set of seen hours
         seenHours.add(formattedTime)
 
-        // Add the hourly weather data to the list
         hourlyWeatherList.add(
             HourlyWeather(
                 time = formattedTime,
-                temperature = formattedTemperature,  // Use formatted string with "°C"
+                temperature = formattedTemperature,  // Use formatted string with unit
                 icon = icon
             )
         )
@@ -50,5 +56,3 @@ fun convertToHourlyWeather(hourlyWeather: List<ListElement>): List<HourlyWeather
 
     return hourlyWeatherList
 }
-
-
