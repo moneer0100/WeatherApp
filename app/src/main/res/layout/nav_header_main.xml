@@ -5,7 +5,7 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@color/purple_200"
+    android:background="@drawable/w"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     app:layoutDescription="@xml/nav_header_main_scene2">
 
@@ -15,7 +15,7 @@
         android:layout_height="91dp"
         android:layout_marginStart="44dp"
         android:layout_marginBottom="28dp"
-        android:background="@drawable/header"
+        android:background="@drawable/clear_sky"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

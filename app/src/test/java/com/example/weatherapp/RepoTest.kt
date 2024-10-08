@@ -63,7 +63,7 @@ class RepoTest {
     }
     @Test
     fun getForcast_longitudeAndLatitude_weatherResponse() = runBlocking {
-
+        //when
         val result = repo.getForcastWeather(0.0, 0.0, "metric", "en").first()
 
 
@@ -90,7 +90,7 @@ class RepoTest {
             10.11111,
             -100.55
         )
-        repo.insertDataFaviourit(favoriteWeather)
+       repo.insertDataFaviourit(favoriteWeather)
 
         val allFavorites = repo.getAllWeatherFavoirit().first()
 

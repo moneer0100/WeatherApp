@@ -74,7 +74,7 @@ class HomeViewModelTest {
 
     }
     @Test
-    fun getCurrent_Success() = runBlocking{
+    fun getCurrent_Success() = runBlockingTest{
         // Given
         val latitude = 0.0 // Use valid latitude
         val longitude = 0.0 // Use valid longitude
