@@ -1,6 +1,7 @@
 package com.example.weatherapp.Model
 
 import Welcome
+import android.util.Log
 import com.example.weatherapp.DataBase.WeatherLocaSource
 import com.example.weatherapp.network.WeatherRemoteData
 import kotlinx.coroutines.flow.Flow
@@ -25,6 +26,7 @@ class WeatherRepoImp(
         language: String,
         units: String?
     ): Flow<Forecast> {
+
         return flowOf(weatherRemoteData.getForcastResponse(lat,long,language,units))
     }
     companion object {

@@ -43,14 +43,14 @@ class HomeViewModel(private val repo: WeatherRepo) : ViewModel() {
     private val weatherForcastLoad = MutableStateFlow<ResponseState<Forecast>>(ResponseState.Loading)
     val weatherforcast = weatherForcastLoad.asStateFlow()
 
-    private val forcasttWeatherLive = MutableLiveData<Forecast>()
+//    private val forcasttWeatherLive = MutableLiveData<Forecast>()
     fun getForcastWeatherRespons(lat:Double,lon: Double,language: String,units:String){
 
         viewModelScope.launch(Dispatchers.IO){
             repo.getForcastWeather(lat,lon,language,language)
                 ?.catch { error->weatherForcastLoad.value=ResponseState.Error(error)  }
                 ?.collect{data->weatherForcastLoad.value=ResponseState.Success(data)
-                    Log.d("moneer", "getForcastWeatherRespons:$data ")
+                    Log.d("moneerforcast", "getForcastWeatherRespons:${data} ")
                 }
 
         }

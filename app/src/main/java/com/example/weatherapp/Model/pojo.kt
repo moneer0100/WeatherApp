@@ -1,10 +1,7 @@
-
-import androidx.room.Entity
-
-import androidx.room.PrimaryKey
+import com.example.weatherapp.Model.Coord
 
 
-data class Welcome (
+data class Welcome(
 
     val id: Long,
     val coord: Coord,
