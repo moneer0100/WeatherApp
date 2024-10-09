@@ -76,8 +76,8 @@ class HomeViewModelTest {
     @Test
     fun getCurrent_Success() = runBlockingTest{
         // Given
-        val latitude = 0.0 // Use valid latitude
-        val longitude = 0.0 // Use valid longitude
+        val latitude = 0.0
+        val longitude = 0.0
         val language = "en"
         val units = "metric"
 

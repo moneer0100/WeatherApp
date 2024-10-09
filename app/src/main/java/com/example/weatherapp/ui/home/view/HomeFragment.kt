@@ -372,26 +372,27 @@ class HomeFragment : Fragment() {
 
     private fun displayWeatherDatacurrent(weatherResponse: Welcome, language: String, units: String) {
         val currentWeather = weatherResponse.main
-        val current=weatherResponse.weather
+        val current = weatherResponse.weather
         val temperatureUnit = getTemperatureUnit(units, language)
 
-
+        // Convert temperature to an integer
         val temperatureValue = if (units == Constant.ENUM_UNITS.metric.toString()) {
-            currentWeather.temp.toString()  // Assuming temp is already in Celsius
+            currentWeather.temp.toInt().toString()  // Convert temperature to an integer
         } else if (language == Constant.Enum_lANGUAGE.ar.toString()) {
-            currentWeather.temp.toString().toArabicNumerals()
+            currentWeather.temp.toInt().toString().toArabicNumerals()  // Convert to Arabic numerals if needed
         } else {
-            currentWeather.temp.toString()
+            currentWeather.temp.toInt().toString()  // Convert temperature to an integer
         }
 
         binding.temperatureId.text = "$temperatureValue $temperatureUnit"
-        // change in dicription
+        // change in description
         binding.statuId.text = "${current.get(0).description}"
 
         // Set the weather icon
-        val weatherIcon = weatherResponse.weather.firstOrNull()?.icon ?: "01d" // Default icon if not found
+        val weatherIcon = weatherResponse.weather.firstOrNull()?.icon ?: "01d"  // Default icon if not found
         binding.imageView.setImageResource(getIcon(weatherIcon))
     }
+
 
     private fun displayWeatherDataforcast(weatherResponseForecast: Forecast, language: String, units: String) {
         val forecastList = weatherResponseForecast.list

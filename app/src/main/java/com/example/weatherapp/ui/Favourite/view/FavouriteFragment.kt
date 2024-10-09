@@ -35,7 +35,9 @@ class FavouriteFragment : Fragment() {
         FavouriteFactory(
             WeatherRepoImp.getInstance(
                 weatherRemotImp.getInstance(RetrofitHelper.service),
-                WeatherLocalDataImp.getInstance(DatabaseClient.getInstance(requireContext()).WeatherDataBase())
+                WeatherLocalDataImp.getInstance(
+                    DatabaseClient.getInstance(requireContext()).WeatherDataBase()
+                )
             )
         )
     }
@@ -66,6 +68,7 @@ class FavouriteFragment : Fragment() {
                         Log.i("FavoriteFragment", "Loading state")
                         binding.recycleViewFav.visibility = View.GONE
                     }
+
                     is ResponseState.Success -> {
                         binding.recycleViewFav.visibility = View.VISIBLE
                         favAdapter.submitList(state.data)
@@ -73,9 +76,11 @@ class FavouriteFragment : Fragment() {
 
                         if (state.data.isEmpty()) {
                             binding.recycleViewFav.visibility = View.GONE
-                            binding.placeholderImage.visibility = View.VISIBLE // Show placeholder when no favorites
+                            binding.placeholderImage.visibility =
+                                View.VISIBLE // Show placeholder when no favorites
                         }
                     }
+
                     is ResponseState.Error -> {
                         Log.i("FavoriteFragment", "Error: ${state.message}")
                     }
@@ -99,7 +104,11 @@ class FavouriteFragment : Fragment() {
                 .setMessage("Do yoy need show this location in the home")
                 .setPositiveButton("View Details") { dialog, _ ->
                     val action = FavouriteFragmentDirections.actionNavFavToNavHome().apply {
-                        latlon = com.example.weatherapp.Model.LocationLatLngPojo("fav_location", favoriteWeather.lat, favoriteWeather.lon)
+                        latlon = com.example.weatherapp.Model.LocationLatLngPojo(
+                            "fav_location",
+                            favoriteWeather.lat,
+                            favoriteWeather.lon
+                        )
                     }
                     findNavController().navigate(action)
                     dialog.dismiss()

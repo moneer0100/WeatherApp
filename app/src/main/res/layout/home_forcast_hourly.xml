@@ -12,10 +12,11 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="1dp"
         android:background="#0277BD"
+
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
-
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,4 +1,3 @@
-
 package com.example.weatherapp.ui.Favourite.viewModel
 
 import android.util.Log
@@ -13,10 +12,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
-class FavouriteViewModel(private val repo: WeatherRepo): ViewModel() {
+class FavouriteViewModel(private val repo: WeatherRepo) : ViewModel() {
 
     // MutableStateFlow now handles a list of FaviouritWeather
-    private val _favList = MutableStateFlow<ResponseState<List<FaviouritWeather>>>(ResponseState.Loading)
+    private val _favList =
+        MutableStateFlow<ResponseState<List<FaviouritWeather>>>(ResponseState.Loading)
     val favList = _favList.asStateFlow()
 
     fun getFavWeather() {

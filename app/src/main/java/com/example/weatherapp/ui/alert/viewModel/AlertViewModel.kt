@@ -15,29 +15,31 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
-class AlertViewModel(private val repo :WeatherRepo) : ViewModel() {
+class AlertViewModel(private val repo: WeatherRepo) : ViewModel() {
 
-private val _alert= MutableStateFlow<ResponseState<List<AlertPojo>>>(ResponseState.Loading)
-val alert = _alert.asStateFlow()
-fun getAlertviewmodel(){
-    viewModelScope.launch (Dispatchers.IO){
-        repo.getAlert()
-            .catch { error->
-                _alert.value=ResponseState.Error(error)
-            }.collect{listData->
-                _alert.value=ResponseState.Success(listData)
-            }
+    private val _alert = MutableStateFlow<ResponseState<List<AlertPojo>>>(ResponseState.Loading)
+    val alert = _alert.asStateFlow()
+    fun getAlertviewmodel() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.getAlert()
+                .catch { error ->
+                    _alert.value = ResponseState.Error(error)
+                }.collect { listData ->
+                    _alert.value = ResponseState.Success(listData)
+                }
+        }
+
     }
 
-}
-    fun insertAlerViewModelt(alertPojo: AlertPojo){
-        viewModelScope.launch(Dispatchers.IO){
+    fun insertAlerViewModelt(alertPojo: AlertPojo) {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.insertAlert(alertPojo)
 
         }
     }
-    fun deletAlertViewModel(alertPojo: AlertPojo){
-        viewModelScope.launch(Dispatchers.IO){
+
+    fun deletAlertViewModel(alertPojo: AlertPojo) {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.deleteAlert(alertPojo)
         }
     }

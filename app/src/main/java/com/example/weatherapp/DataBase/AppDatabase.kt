@@ -32,7 +32,7 @@ object DatabaseClient{
     }}
     val migration1To2 = object : Migration(1, 2) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            // For example, adding a new column to the FaviouritWeather table
+
             database.execSQL("ALTER TABLE FaviouritWeather ADD COLUMN new_column_name TEXT")
         }
     }

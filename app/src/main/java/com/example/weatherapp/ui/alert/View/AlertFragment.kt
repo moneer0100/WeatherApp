@@ -65,14 +65,15 @@ class AlertFragment : Fragment() {
     private lateinit var customAlertDialogBinding: AlertDialogBinding
     private lateinit var materialAlertDialogBuilder: MaterialAlertDialogBuilder
     private var _binding: FragmentAlertBinding? = null
- private val binding get() = _binding!!
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        notificationManager = requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager =
+            requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val isNotificationPermissionGranted = notificationManager.areNotificationsEnabled()
         if (!isNotificationPermissionGranted) {
             showNotificationPermissionDialog()
@@ -80,12 +81,16 @@ class AlertFragment : Fragment() {
         alertViewModelFactory = AlertFactroy(
             WeatherRepoImp.getInstance(
                 weatherRemotImp.getInstance(RetrofitHelper.service),
-                WeatherLocalDataImp.getInstance(DatabaseClient.getInstance(requireContext()).WeatherDataBase())
-            ))
+                WeatherLocalDataImp.getInstance(
+                    DatabaseClient.getInstance(requireContext()).WeatherDataBase()
+                )
+            )
+        )
 
 
-        alertViewModel = ViewModelProvider(this,alertViewModelFactory)[AlertViewModel::class.java]
-        customAlertDialogBinding = AlertDialogBinding.inflate(LayoutInflater.from(requireContext()), null, false)
+        alertViewModel = ViewModelProvider(this, alertViewModelFactory)[AlertViewModel::class.java]
+        customAlertDialogBinding =
+            AlertDialogBinding.inflate(LayoutInflater.from(requireContext()), null, false)
         materialAlertDialogBuilder = MaterialAlertDialogBuilder(requireActivity())
 
         _binding = FragmentAlertBinding.inflate(inflater, container, false)
@@ -98,7 +103,7 @@ class AlertFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.floatingActionButton.setOnClickListener{
+        binding.floatingActionButton.setOnClickListener {
 
             val action = AlertFragmentDirections.actionNavAlertToMapsFragment()
             action.type = Constant.ALERT_KEY
@@ -121,6 +126,7 @@ class AlertFragment : Fragment() {
                     is ResponseState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
                     }
+
                     is ResponseState.Success -> {
                         adapter.submitList(it.data)
                         if (it.data.isNotEmpty()) {
@@ -143,12 +149,12 @@ class AlertFragment : Fragment() {
             }
         }
     }
+
     override fun onResume() {
         super.onResume()
         val args = AlertFragmentArgs.fromBundle(requireArguments())
         val latLng = args.latlon
-        if (latLng != null)
-        {
+        if (latLng != null) {
             launchCustomAlertDialog(latLng)
         }
     }
@@ -167,14 +173,14 @@ class AlertFragment : Fragment() {
         var startTime = Calendar.getInstance().timeInMillis
         val endCal = Calendar.getInstance()
         endCal.add(Calendar.DAY_OF_MONTH, 0)
-        endCal.add(Calendar.HOUR,1)
+        endCal.add(Calendar.HOUR, 1)
         var endTime = endCal.timeInMillis
 
         customAlertDialogBinding.buttonSave.setOnClickListener {
             val id = if (customAlertDialogBinding.radioAlarm.isChecked) {
-                saveToDatabase(startTime, endTime, AlertKind.ALARM,locationLatLngPojo)
+                saveToDatabase(startTime, endTime, AlertKind.ALARM, locationLatLngPojo)
             } else {
-                saveToDatabase(startTime, endTime, AlertKind.NOTIFICATION,locationLatLngPojo)
+                saveToDatabase(startTime, endTime, AlertKind.NOTIFICATION, locationLatLngPojo)
             }
 
             scheduleWork(startTime, endTime, id)
@@ -240,6 +246,7 @@ class AlertFragment : Fragment() {
             someActivityResultLauncher.launch(intent)
         }
     }
+
     private val someActivityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (!Settings.canDrawOverlays(requireContext())) {
@@ -288,9 +295,20 @@ class AlertFragment : Fragment() {
 
     }
 
-    private fun saveToDatabase(startTime: Long, endTime: Long, alarmKind: String,locationLatLngPojo: LocationLatLngPojo): String {
+    private fun saveToDatabase(
+        startTime: Long,
+        endTime: Long,
+        alarmKind: String,
+        locationLatLngPojo: LocationLatLngPojo
+    ): String {
         val alertPojo =
-            AlertPojo(start = startTime, end = endTime, kind = alarmKind, lat = locationLatLngPojo.lat, lon = locationLatLngPojo.lng)
+            AlertPojo(
+                start = startTime,
+                end = endTime,
+                kind = alarmKind,
+                lat = locationLatLngPojo.lat,
+                lon = locationLatLngPojo.lng
+            )
         alertViewModel.insertAlerViewModelt(alertPojo)
         Log.i("TAG", "saveToDatabase: =====${alertPojo.id}")
         return alertPojo.id
