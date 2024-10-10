@@ -38,45 +38,45 @@ import com.example.weatherapp.ui.home.viewModel.HomeViewModel
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+
 const val LOCATION_DIALOG_SHOWN = "locationDialogShown"
+
 class HomeFragment : Fragment() {
     private lateinit var dayilyAdapter: HomeDayAdapter
-    private lateinit var locationManager:LocationManager
+    private lateinit var locationManager: LocationManager
     private lateinit var hourlyAdapter: HomeHourlyAdapter
     private var isLocationReceived = false
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val MY_LOCATION_PERMISSION_ID = 5005
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
-    private lateinit var locationFav:String
+    private lateinit var locationFav: String
     private lateinit var langauages: String
     private lateinit var unitss: String
-
-
-
-
-    lateinit var sharedPreferences:SharedPreferences
+    lateinit var sharedPreferences: SharedPreferences
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-
     private val viewModel: HomeViewModel by viewModels {
         HomeViewFactory(
-            WeatherRepoImp.getInstance(weatherRemotImp.getInstance(RetrofitHelper.service),
-       WeatherLocalDataImp.getInstance(DatabaseClient.getInstance(requireContext()).WeatherDataBase()))
+            WeatherRepoImp.getInstance(
+                weatherRemotImp.getInstance(RetrofitHelper.service),
+                WeatherLocalDataImp.getInstance(
+                    DatabaseClient.getInstance(requireContext()).WeatherDataBase()
+                )
+            )
         )
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -85,78 +85,71 @@ class HomeFragment : Fragment() {
     @SuppressLint("ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
-        sharedPreferences = requireContext().getSharedPreferences("LocationUsedMethod", Context.MODE_PRIVATE)
+        sharedPreferences =
+            requireContext().getSharedPreferences("LocationUsedMethod", Context.MODE_PRIVATE)
         sharedPreferences = requireContext().getSharedPreferences(
             Constant.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE
         )
-        langauages = sharedPreferences.getString(Constant.LANGUAGE_KEY, Constant.Enum_lANGUAGE.en.toString()).toString()
-        unitss = sharedPreferences.getString(Constant.UNITS_KEY, Constant.ENUM_UNITS.metric.toString()).toString()
+        langauages =
+            sharedPreferences.getString(Constant.LANGUAGE_KEY, Constant.Enum_lANGUAGE.en.toString())
+                .toString()
+        unitss =
+            sharedPreferences.getString(Constant.UNITS_KEY, Constant.ENUM_UNITS.metric.toString())
+                .toString()
         setupRecyclerView()
         initializeLocationClient()
         transicationDatawithArgs()
         checkLocationSettings()
-//        locationFav = requireContext().getString(1,"fav_location")
-
     }
-    fun transicationDatawithArgs(){
+
+    fun transicationDatawithArgs() {
         val args = HomeFragmentArgs.fromBundle(requireArguments())
-        Log.i("HomeFragment", "Received args: ${args.latlon}")
         val latitude = args.latlon?.lat
         val longitude = args.latlon?.lng
-        Log.i("HomeFragment", "Received latitude: $latitude, longitude: $longitude")
-
         if (latitude != null && longitude != null) {
             if (!isLocationReceived) {
-
                 fetchWeathercurrentData(LatLng(latitude, longitude), langauages, unitss)
                 fetchWeatherforcastData(LatLng(latitude, longitude), langauages, unitss)
-                Log.i("HomeFragment", "Received after if statement: latitude: $latitude, longitude: $longitude")
                 isLocationReceived = true
             }
         } else {
-
-            val isLocationFromMapActivity = arguments?.getBoolean("isLocationFromMapActivity") ?: false
+            val isLocationFromMapActivity =
+                arguments?.getBoolean("isLocationFromMapActivity") ?: false
 
             if (isLocationFromMapActivity) {
-                Log.i("HomeFragment", "Location is from MapActivity")
             } else {
-                Log.i("HomeFragment", "Location is not from MapActivity")
                 val locationDialogShown = sharedPreferences.getBoolean(LOCATION_DIALOG_SHOWN, false)
-                Log.i("HomeFragment", "Location dialog shown: $locationDialogShown")
                 if (!locationDialogShown) {
                     showLocationDialog()
                     sharedPreferences.edit().putBoolean(LOCATION_DIALOG_SHOWN, true).apply()
                     sharedPreferences.edit().putString("Location_Method", "Use GPS").apply()
-                    Log.i("TAG", "onViewCreated: Dialog")
                 } else {
                     val locationMethod = sharedPreferences.getString("Location_Method", "Use GPS")
                     handleLocationMethod(locationMethod)
-                    Log.i("TAG", "onViewCreated: not Dialog")
                 }
             }
         }
     }
 
-
     private fun setupRecyclerView() {
         hourlyAdapter = HomeHourlyAdapter(requireContext())
         binding.recyclerViewhourly.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = hourlyAdapter
         }
-        dayilyAdapter= HomeDayAdapter(requireContext())
+        dayilyAdapter = HomeDayAdapter(requireContext())
         binding.recycleviewDay.apply {
-            layoutManager=LinearLayoutManager(requireContext())
-            adapter=dayilyAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = dayilyAdapter
         }
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }
 
     private fun initializeLocationClient() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireContext())
     }
 
     private fun checkLocationSettings() {
@@ -171,7 +164,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     override fun onStart() {
         super.onStart()
         checkLocationSettings()
@@ -180,22 +172,19 @@ class HomeFragment : Fragment() {
     private fun checkLocationPermissions(): Boolean {
         return ActivityCompat.checkSelfPermission(
             requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(
-                    requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestLocationPermissions() {
         ActivityCompat.requestPermissions(
-            requireContext() as Activity,
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            MY_LOCATION_PERMISSION_ID
+            requireContext() as Activity, arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+            ), MY_LOCATION_PERMISSION_ID
         )
     }
+
     private fun handleLocationMethod(locationMethod: String?) {
         sharedPreferences.edit().putString("Location_Method", locationMethod).apply()
         when (locationMethod) {
@@ -203,7 +192,6 @@ class HomeFragment : Fragment() {
             "Open Map" -> openMap()
         }
     }
-
 
     @SuppressLint("SetTextI18n")
     private fun getCityAndAddress(latitude: Double, longitude: Double) {
@@ -214,11 +202,13 @@ class HomeFragment : Fragment() {
             if (addresses != null && addresses.isNotEmpty()) {
                 val address = addresses[0]
                 val country = address.countryName ?: "Unknown country"
-                val administrativeArea = address.adminArea ?: "Unknown administrative area" // State/Province
+                val administrativeArea =
+                    address.adminArea ?: "Unknown administrative area" // State/Province
                 val locality = address.locality ?: "Unknown city" // City
                 val subLocality = address.subLocality ?: "Unknown neighborhood" // Neighborhood
                 val postalCode = address.postalCode ?: "Unknown postal code" // Postal Code
-                val fullAddress = address.getAddressLine(0) ?: "Unknown address" // Full address line
+                val fullAddress =
+                    address.getAddressLine(0) ?: "Unknown address" // Full address line
 
                 if (isAdded) {
                     binding.cityId.text = """
@@ -245,47 +235,56 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun getFreshLocation() {
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000) // 10 seconds
-            .build()
+        val locationRequest =
+            LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000) // 10 seconds
+                .build()
         fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            object : LocationCallback() {
+            locationRequest, object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
-                    if (!isLocationReceived){
-                    locationResult.lastLocation?.let { location ->
-                        latitude = location.latitude
-                        longitude = location.longitude
+                    if (!isLocationReceived) {
+                        locationResult.lastLocation?.let { location ->
+                            latitude = location.latitude
+                            longitude = location.longitude
 
-                        // Check if fragment is added before fetching weather data
+                            // Check if fragment is added before fetching weather data
 
-                        fetchWeathercurrentData(LatLng(latitude, longitude), langauages, unitss)
-                        fetchWeatherforcastData(LatLng(latitude, longitude), langauages, unitss)
-                        getCityAndAddress(latitude, longitude)
-                        fusedLocationProviderClient.removeLocationUpdates(this)
+                            fetchWeathercurrentData(LatLng(latitude, longitude), langauages, unitss)
+                            fetchWeatherforcastData(LatLng(latitude, longitude), langauages, unitss)
+                            getCityAndAddress(latitude, longitude)
+                            fusedLocationProviderClient.removeLocationUpdates(this)
+                        }
                     }
-                }}
+                }
 
-            },
-            Looper.myLooper()
+            }, Looper.myLooper()
         )
     }
-    private fun fetchWeatherforcastData(latLng: LatLng,language: String,units:String) {
+
+    private fun fetchWeatherforcastData(latLng: LatLng, language: String, units: String) {
         if (isConnected(requireContext())) {
 
-            viewModel.getForcastWeatherRespons(latLng.latitude, latLng.longitude, langauages,unitss)
-            viewModel.getCurrentWeatherResponse(latLng.latitude, latLng.longitude, langauages,unitss)
+            viewModel.getForcastWeatherRespons(
+                latLng.latitude, latLng.longitude, langauages, unitss
+            )
+            viewModel.getCurrentWeatherResponse(
+                latLng.latitude, latLng.longitude, langauages, unitss
+            )
 
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.Main) {
                 viewModel.weatherforcast.collectLatest { viewStateResult ->
                     when (viewStateResult) {
                         is ResponseState.Success -> {
-                            displayWeatherDataforcast(viewStateResult.data,langauages,unitss)
-                            saveWeatherDataToFileforcast(viewStateResult.data, "weather_data_forcast.txt")
+                            displayWeatherDataforcast(viewStateResult.data, langauages, unitss)
+                            saveWeatherDataToFileforcast(
+                                viewStateResult.data, "weather_data_forcast.txt"
+                            )
 
                         }
+
                         is ResponseState.Loading -> {
 
                         }
+
                         is ResponseState.Error -> {
                             displayError(viewStateResult.message.toString())
                             loadWeatherDataFromFileforcast()
@@ -304,20 +303,22 @@ class HomeFragment : Fragment() {
             displayWeatherDataforcast(it, "", "")
         }
     }
+
     private fun saveWeatherDataToFile(data: Welcome, fileName: String) {
         val file = File(requireContext().filesDir, fileName)
         val jsonString = Gson().toJson(data)
         file.writeText(jsonString)
     }
+
     private fun saveWeatherDataToFileforcast(data: Forecast, fileName: String) {
         val file = File(requireContext().filesDir, fileName)
         val jsonString = Gson().toJson(data)
         file.writeText(jsonString)
     }
-    private fun readWeatherDataFromFileforcast(): Forecast?{
+
+    private fun readWeatherDataFromFileforcast(): Forecast? {
         val fileName = "weather_data_forcast.txt"
         val file = File(requireContext().filesDir, fileName)
-
         return try {
             if (file.exists()) {
                 val jsonString = file.readText()
@@ -337,13 +338,11 @@ class HomeFragment : Fragment() {
         if (isConnected(requireContext())) {
             viewModel.getForcastWeatherRespons(latLng.latitude, latLng.longitude, language, units)
             viewModel.getCurrentWeatherResponse(latLng.latitude, latLng.longitude, language, units)
-
-            // Check binding is initialized and fragment is added before accessing UI
             if (isAdded) {
                 binding.dateId.text = formatDate(date.format(Date()))
             }
 
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.Main) {
                 viewModel.weathercurrent.collectLatest { viewStateResult ->
                     when (viewStateResult) {
                         is ResponseState.Success -> {
@@ -351,13 +350,17 @@ class HomeFragment : Fragment() {
                             if (isAdded) {
                                 displayWeatherDatacurrent(viewStateResult.data, language, units)
 
-                                saveWeatherDataToFile(viewStateResult.data, "weather_data_current.txt")
+                                saveWeatherDataToFile(
+                                    viewStateResult.data, "weather_data_current.txt"
+                                )
                                 binding.progressBar3.visibility = View.GONE
                             }
                         }
+
                         is ResponseState.Loading -> {
-                            binding.progressBar3.visibility = View.VISIBLE
+                           binding.progressBar3.visibility = View.VISIBLE
                         }
+
                         is ResponseState.Error -> {
                             displayError(viewStateResult.message.toString())
                             loadWeatherDataFromFile()
@@ -370,7 +373,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun displayWeatherDatacurrent(weatherResponse: Welcome, language: String, units: String) {
+    private fun displayWeatherDatacurrent(
+        weatherResponse: Welcome, language: String, units: String
+    ) {
         val currentWeather = weatherResponse.main
         val current = weatherResponse.weather
         val temperatureUnit = getTemperatureUnit(units, language)
@@ -379,7 +384,8 @@ class HomeFragment : Fragment() {
         val temperatureValue = if (units == Constant.ENUM_UNITS.metric.toString()) {
             currentWeather.temp.toInt().toString()  // Convert temperature to an integer
         } else if (language == Constant.Enum_lANGUAGE.ar.toString()) {
-            currentWeather.temp.toInt().toString().toArabicNumerals()  // Convert to Arabic numerals if needed
+            currentWeather.temp.toInt().toString()
+                .toArabicNumerals()  // Convert to Arabic numerals if needed
         } else {
             currentWeather.temp.toInt().toString()  // Convert temperature to an integer
         }
@@ -389,27 +395,26 @@ class HomeFragment : Fragment() {
         binding.statuId.text = "${current.get(0).description}"
 
         // Set the weather icon
-        val weatherIcon = weatherResponse.weather.firstOrNull()?.icon ?: "01d"  // Default icon if not found
+        val weatherIcon =
+            weatherResponse.weather.firstOrNull()?.icon ?: "01d"  // Default icon if not found
         binding.imageView.setImageResource(getIcon(weatherIcon))
     }
 
-
-    private fun displayWeatherDataforcast(weatherResponseForecast: Forecast, language: String, units: String) {
+    private fun displayWeatherDataforcast(
+        weatherResponseForecast: Forecast, language: String, units: String
+    ) {
         val forecastList = weatherResponseForecast.list
 
 
-
         // Convert daily and hourly weather data
-        val convertDailyWeather = convertToDailyWeather(forecastList,units,language)
-        val convertHourlyWeather = convertToHourlyWeather(forecastList,units,language)
+        val convertDailyWeather = convertToDailyWeather(forecastList, units, language)
+        val convertHourlyWeather = convertToHourlyWeather(forecastList, units, language)
 
         // Submit the data to the adapters
         hourlyAdapter.submitList(convertHourlyWeather)
         dayilyAdapter.submitList(convertDailyWeather)
 
     }
-
-
 
     private fun getTemperatureUnit(units: String, language: String): String {
         return when (language) {
@@ -421,6 +426,7 @@ class HomeFragment : Fragment() {
                     else -> "°س"
                 }
             }
+
             else -> {
                 when (units) {
                     Constant.ENUM_UNITS.metric.toString() -> "°C"
@@ -431,9 +437,10 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
     private fun openMap() {
         var tye = "Home"
-        var action :HomeFragmentDirections.ActionNavHomeToMapsFragment =
+        var action: HomeFragmentDirections.ActionNavHomeToMapsFragment =
             HomeFragmentDirections.actionNavHomeToMapsFragment().apply {
                 type = tye
             }
@@ -443,21 +450,21 @@ class HomeFragment : Fragment() {
     private fun showLocationDialog() {
         val items = arrayOf("Use GPS", "Open Map")
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Select location method")
-            .setItems(items) { dialog, which ->
-                when (which) {
-                    0 -> {
-                        useGPS()
-                        Log.i("TAG", "showLocationDialog: =============================== GPS")
-                    }
-                    1 -> {
-                        openMap()
-                        Log.i("TAG", "showLocationDialog: =============================== MAP")
-
-                    }
+        builder.setTitle("Select location method").setItems(items) { dialog, which ->
+            when (which) {
+                0 -> {
+                    useGPS()
+                    Log.i("TAG", "showLocationDialog: =============================== GPS")
                 }
-                dialog.dismiss()
+
+                1 -> {
+                    openMap()
+                    Log.i("TAG", "showLocationDialog: =============================== MAP")
+
+                }
             }
+            dialog.dismiss()
+        }
         val alert = builder.create()
         alert.show()
     }
@@ -466,13 +473,13 @@ class HomeFragment : Fragment() {
         checkLocationSettings()
     }
 
-
     private fun displayError(message: String) {
         Log.e("HomeFragment", "Error: $message")
     }
 
     private fun isConnected(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return connectivityManager.activeNetworkInfo?.isConnected == true
     }
 
@@ -503,7 +510,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     private fun enableLocationService() {
         val intent = Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(intent)
@@ -524,8 +530,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun isLocationEnabled(): Boolean {
-        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        val locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
     }
 
     override fun onDestroyView() {
@@ -535,10 +544,10 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val argsLatLng =  HomeFragmentArgs.fromBundle(requireArguments()).latlon
+        val argsLatLng = HomeFragmentArgs.fromBundle(requireArguments()).latlon
         if (argsLatLng != null) {
-            fetchWeathercurrentData(LatLng(argsLatLng.lat, argsLatLng.lng),langauages,unitss)
-            fetchWeatherforcastData(LatLng(argsLatLng.lat, argsLatLng.lng),langauages,unitss)
+            fetchWeathercurrentData(LatLng(argsLatLng.lat, argsLatLng.lng), langauages, unitss)
+            fetchWeatherforcastData(LatLng(argsLatLng.lat, argsLatLng.lng), langauages, unitss)
 
             Log.i("TAG", "onResume: ================")
         } else {
@@ -557,7 +566,6 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
 
     private fun getIcon(icon: String): Int {
         val iconValue: Int
@@ -584,15 +592,12 @@ class HomeFragment : Fragment() {
         }
         return iconValue
     }
+
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == MY_LOCATION_PERMISSION_ID && grantResults.isNotEmpty() &&
-            grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
+        if (requestCode == MY_LOCATION_PERMISSION_ID && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (isLocationEnabled()) {
                 getFreshLocation()
             } else {

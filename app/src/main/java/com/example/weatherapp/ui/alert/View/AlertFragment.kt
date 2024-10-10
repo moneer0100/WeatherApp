@@ -64,8 +64,8 @@ class AlertFragment : Fragment() {
     private lateinit var alertViewModelFactory: AlertFactroy
     private lateinit var customAlertDialogBinding: AlertDialogBinding
     private lateinit var materialAlertDialogBuilder: MaterialAlertDialogBuilder
-    private var _binding: FragmentAlertBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var _binding: FragmentAlertBinding
+    private val binding get() = _binding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -124,24 +124,24 @@ class AlertFragment : Fragment() {
             alertViewModel.alert.collectLatest {
                 when (it) {
                     is ResponseState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
+//                        binding.progressBar.visibility = View.VISIBLE
                     }
 
                     is ResponseState.Success -> {
                         adapter.submitList(it.data)
                         if (it.data.isNotEmpty()) {
-                            binding.progressBar.visibility = View.GONE
+                          //  binding.progressBar.visibility = View.GONE
                             binding.recyclerView.visibility = View.VISIBLE
                             binding.groupNoAlarms.visibility = View.GONE
                         } else {
-                            binding.progressBar.visibility = View.GONE
+//                            binding.progressBar.visibility = View.GONE
                             binding.recyclerView.visibility = View.GONE
                             binding.groupNoAlarms.visibility = View.VISIBLE
                         }
                     }
 
                     else -> {
-                        binding.progressBar.visibility = View.GONE
+//                        binding.progressBar.visibility = View.GONE
                         binding.recyclerView.visibility = View.GONE
                         binding.groupNoAlarms.visibility = View.VISIBLE
                     }
@@ -329,9 +329,14 @@ class AlertFragment : Fragment() {
     private fun delAlertSnack(alertPojo: AlertPojo) {
         Snackbar.make(requireView(), getString(R.string.ask_del_fav), Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.del_item)) {
+                // Cancel any work related to the alertPojo
+                WorkManager.getInstance(requireContext()).cancelAllWorkByTag(alertPojo.id)
+
+                // Delete the alert after cancelling
                 alertViewModel.deletAlertViewModel(alertPojo)
             }.show()
     }
+
 
     private fun showNotificationPermissionDialog() {
         val alertDialogBuilder = AlertDialog.Builder(requireActivity())
@@ -374,8 +379,8 @@ class AlertFragment : Fragment() {
         startActivity(intent)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        _binding = null
+//    }
 }
